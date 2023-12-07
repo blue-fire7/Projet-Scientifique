@@ -2,39 +2,54 @@
 import { onMounted, ref } from "vue";
 import L from "leaflet";
 
-var MARKERS_MAX = 4;
+const markers = ref([]);
+const map = ref();
+const mapContainer = ref();
+const coordinatesDisplay = ref("");
 
-var map = L.map('mapContainer.value').setView([45.76667, 4.88333], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution:
-    '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+onMounted(() => {
+  map.value = L.map(mapContainer.value).setView([51.505, -0.09], 13);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map.value);
 
-// a layer group, used here like a container for markers
-var markersGroup = L.layerGroup();
-map.addLayer(markersGroup);
-
-map.on('click', function (e) {
-  // get the count of currently displayed markers
-  var markersCount = markersGroup.getLayers().length;
-
-  if (markersCount < MARKERS_MAX) {
-    var marker = L.marker(e.latlng).addTo(markersGroup);
-    return;
-  }
-
-  // remove the markers when MARKERS_MAX is reached
-  markersGroup.clearLayers();
+  // Ajoutez un gestionnaire d'événement de clic sur la carte
+  map.value.on('click', addMarkerOnClick);
 });
+
+function addMarkerOnClick(event) {
+  // Récupérez les coordonnées du clic
+  const clickedLat = event.latlng.lat;
+  const clickedLng = event.latlng.lng;
+
+  // Ajoutez un marqueur à l'emplacement du clic
+  const marker = L.marker([clickedLat, clickedLng]).addTo(map.value);
+
+  // Ajoutez les coordonnées au tableau
+  markers.value.push({ lat: clickedLat, lng: clickedLng });
+
+  // Mettez à jour la chaîne de coordonnées à afficher
+  updateCoordinatesDisplay();
+
+  // Ajoutez un gestionnaire d'événement de clic sur le marqueur pour afficher les coordonnées
+  marker.bindPopup(`Latitude: ${clickedLat}, Longitude: ${clickedLng}`).openPopup();
+}
+
+function updateCoordinatesDisplay() {
+  // Mettez à jour la chaîne de coordonnées à afficher
+  coordinatesDisplay.value = markers.value
+    .map(marker => `Latitude: ${marker.lat}, Longitude: ${marker.lng}`)
+    .join("<br>");
+}
 
 </script>
 
 <template>
-  <div class="simulator">
-    <div id="mapContainer" style="width: 640px; height: 640px"></div>
-    <div class="infos-simu">
-      <h1>Salut</h1>
-    </div>
+  <div class="appContainer">
+    <div ref="mapContainer" style="width: 640px; height: 640px"></div>
+    <div v-html="coordinatesDisplay"></div>
   </div>
 </template>
 

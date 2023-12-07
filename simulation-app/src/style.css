@@ -83,7 +83,7 @@ button:focus-visible {
   }
 }
 
-.simulator {
+.appContainer {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
