@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    depends_on: 
+        - "influxdb"
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    networks:
+      - dashboard
+    
+  influxdb:
+    image: influxdb:1.8.6
+    container_name: influxdb
+    restart: always
+    ports:
+      - 8086:8086
+    volumes:
+      - ./influxdb_data:/var/lib/influxdb
+    networks:
+      - dashboard
+    environment:
+        INFLUXDB_HTTP_AUTH_ENABLED: "true"
+        INFLUXDB_DB: "telegraf"
+        INFLUXDB_ADMIN_USER: "influxdb"
+        INFLUXDB_ADMIN_PASSWORD: "influxdb"
+
+  telegraf:
+      image: telegraf:1.19.0
+      container_name: telegraf
+      depends_on: 
+          - "influxdb"
+      environment:
+          HOST_NAME: "telegraf"
+          INFLUXDB_HOST: "telegraf"
+          INFLUXDB_PORT: "8086"
+          DATABASE: "telegraf"
+      volumes:
+          - ./telegraf.conf:/etc/telegraf/telegraf.conf
+          -  /var/run/docker.sock:/var/run/docker.sock
+      tty: true
+      networks: 
+          - dashboard
+      privileged: true
+  
+  mosquitto:
+        image: eclipse-mosquitto:latest
+        container_name: mosquitto
+        ports:
+            - "1883:1883"
+            - "9001:9001"
+        volumes: 
+         - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+        networks: 
+          - dashboard
+networks:
+  dashboard:
+    driver: bridge
+  
