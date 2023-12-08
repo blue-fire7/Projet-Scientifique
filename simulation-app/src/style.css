@@ -87,5 +87,29 @@ button:focus-visible {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  border: red solid 1px;
+}
+
+.coordinates {
+  border: blue 1px solid;
+}
+
+.map-infos {
+  border: green 1px solid;
+  width: 500px;
+}
+
+.validation {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 50px;
+  margin-top: 20px;
+}
+
+.launch {
+  background-color: #0d6efd;
+}
+
+.reset {
+  background-color: #6c757d;
 }
