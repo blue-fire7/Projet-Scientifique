@@ -5,13 +5,12 @@
     <div class="map-infos">
       <div class="app-actions">
         <h2>Placer vos incendies</h2>
-
       </div>
 
       <div class="coordinates" v-html="coordinatesDisplay"></div>
       <div class="validation">
         <button class="reset" @click="reset">Réinitialiser</button>
-        <button class="launch">Lancer !</button>
+        <button class="launch" @click="launch">Lancer !</button>
       </div>
     </div>
   </div>
@@ -91,5 +90,17 @@ function reset() {
 
   // Mettez à jour la chaîne de coordonnées à afficher après la réinitialisation
   updateCoordinatesDisplay();
+}
+
+function launch() {
+  const fireData = listFires.value.map((fire) => ({
+    latitude: fire.getLatLng().lat,
+    longitude: fire.getLatLng().lng,
+    diametre: fire.options.radius,
+  }));
+
+  console.log(fireData);
+  
+  SensorService.createFire(fireData); 
 }
 </script>
