@@ -1,8 +1,13 @@
 package fr.lespimpons.application.logic.internal.entity;
 
+import fr.lespimpons.application.pojo.geometry.Point;
+
 public interface Sensor {
 
-    void setIntensity(Integer intensity);
+    void setPosition(Point position);
+    Point getPosition();
 
-    Integer getIntensity();
+/*    void setIntensity(Integer intensity);
+
+    Integer getIntensity();*/
 }
