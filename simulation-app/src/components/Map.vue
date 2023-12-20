@@ -96,11 +96,11 @@ function launch() {
   const fireData = listFires.value.map((fire) => ({
     latitude: fire.getLatLng().lat,
     longitude: fire.getLatLng().lng,
-    diametre: fire.options.radius,
+    diameter: fire.options.radius,
   }));
 
   console.log(fireData);
   
-  SensorService.createFire(fireData); 
+  SensorService.sensorsOnFire(fireData); 
 }
 </script>
