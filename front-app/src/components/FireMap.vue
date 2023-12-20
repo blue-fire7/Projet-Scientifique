@@ -73,7 +73,6 @@ const placeMarkers = (markers) => {
 };
 
 const placeTrucks = (trucks) => {
-  console.log(truckIcon);
   trucks.forEach((truck) => {
     new Leaflet.Marker([truck.position.lat, truck.position.long], {
       icon: truckIcon,

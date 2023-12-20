@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex">
-    <FireMap class="col-8" :sensors="fireSensors" :trucks="trucks" />
-    <MapCommand class="col-4" :sensors="fireSensors" :trucks="trucks" />
+    <FireMap class="col-8" :sensors="sensorStore.sensors" :trucks="trucks" />
+    <MapCommand class="col-4" :sensors="sensorStore.sensors" :trucks="trucks" />
   </div>
 </template>
 
@@ -10,15 +10,16 @@ import { onBeforeMount, ref } from 'vue';
 import MapCommand from '../components/MapCommand.vue';
 import { fireService, truckService } from '../services/index';
 import FireMap from '../components/FireMap.vue';
-
-const fireSensors = ref([]);
+import { useSensorStore } from '../store/sensorStore';
 
 const trucks = ref([]);
 
+const sensorStore = useSensorStore();
+
 onBeforeMount(() => {
-  fireSensors.value = fireService.getFireSensors();
+  // TODO: move this part to call the init call somewhere else or maybe not xd :)
+  fireService.getFireSensors();
   trucks.value = truckService.getTrucks();
-  console.log(fireSensors.value);
 });
 </script>
 

@@ -60,8 +60,4 @@ const props = defineProps({
     type: Array,
   },
 });
-
-onMounted(() => {
-  console.log(props.sensors);
-});
 </script>
