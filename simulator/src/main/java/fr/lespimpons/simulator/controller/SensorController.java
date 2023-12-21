@@ -2,10 +2,8 @@ package fr.lespimpons.simulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.lespimpons.application.logic.internal.entity.SensorImpl;
-import fr.lespimpons.application.logic.internal.repository.SensorImplRepository;
 import fr.lespimpons.simulator.entity.Sensor;
-import fr.lespimpons.simulator.repository.SensorRepository;
+import fr.lespimpons.simulator.services.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
@@ -16,11 +14,11 @@ import java.util.List;
 @CrossOrigin("http://localhost:5173/")
 public class SensorController {
     @Autowired
-    private SensorRepository repository;
+    private SensorService service;
 
     @GetMapping("/sensor")
     public List<Sensor> findAll() {
-        return repository.findAll();
+        return service.findAll();
     }
 
     public record Fire(double longitude, double latitude, int diameter) {
@@ -36,7 +34,7 @@ public class SensorController {
 
     @PostMapping("/sensors-on-fire")
     public void sensorsOnFire(@RequestBody List<Fire> listFire) {
-        List<Sensor> sensorList = repository.findAll();
+        List<Sensor> sensorList = service.findAll();
         List<SensorOnFire> sensorOnFireList = new ArrayList<>();
 
         for (Fire fire : listFire) {
@@ -56,6 +54,10 @@ public class SensorController {
 
     public void sendData(String json) {
         System.out.println(json);
+    }
+
+    public void checkSensorsOnFire(){
+
     }
 
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
