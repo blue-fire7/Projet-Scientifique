@@ -2,11 +2,12 @@ package fr.lespimpons.simulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.lespimpons.application.logic.internal.entity.SensorImpl;
+import fr.lespimpons.application.logic.internal.repository.SensorImplRepository;
 import fr.lespimpons.simulator.entity.Sensor;
 import fr.lespimpons.simulator.repository.SensorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,6 @@ import java.util.List;
 @RequestMapping("/api")
 @CrossOrigin("http://localhost:5173/")
 public class SensorController {
-
     @Autowired
     private SensorRepository repository;
 
@@ -23,12 +23,14 @@ public class SensorController {
         return repository.findAll();
     }
 
-    public record Fire(double longitude, double latitude, int diameter) {}
+    public record Fire(double longitude, double latitude, int diameter) {
+    }
 
-    public record SensorOnFire(long id, long intensity){}
+    public record SensorOnFire(long id, long intensity) {
+    }
 
     @PostMapping("/start-fire")
-    public void startFire(@RequestBody List<Fire> listFire){
+    public void startFire(@RequestBody List<Fire> listFire) {
 
     }
 
@@ -52,7 +54,7 @@ public class SensorController {
         sendData(convertObjectToJson(sensorOnFireList));
     }
 
-    public void sendData(String json){
+    public void sendData(String json) {
         System.out.println(json);
     }
 
@@ -69,7 +71,7 @@ public class SensorController {
         return distance * 1000;
     }
 
-    public long calculateIntensity(double distance, double radius){
+    public long calculateIntensity(double distance, double radius) {
         long nb = Math.round(radius) - Math.round(distance);
         long result = (nb * 100 / Math.round(radius)) / 10;
         return Math.round(result);

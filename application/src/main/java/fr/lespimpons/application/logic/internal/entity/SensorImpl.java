@@ -3,8 +3,7 @@ package fr.lespimpons.application.logic.internal.entity;
 import fr.lespimpons.application.pojo.geometry.Point;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
@@ -12,6 +11,9 @@ import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "sensor")
 public class SensorImpl implements Sensor {

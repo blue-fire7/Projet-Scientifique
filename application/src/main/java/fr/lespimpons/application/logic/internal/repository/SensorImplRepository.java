@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface SensorImplRepository extends JpaRepository<SensorImpl, Integer> {
+public interface SensorImplRepository extends JpaRepository<SensorImpl, Long> {
     @Query(value = """
         SELECT  new fr.lespimpons.application.logic.dto.SensorDto(
         s.id,
