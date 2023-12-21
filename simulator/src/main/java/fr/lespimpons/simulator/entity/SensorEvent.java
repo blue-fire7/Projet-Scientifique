@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Builder
-@Table(name = "sensor_event")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "sensor_event")
 public class SensorEvent implements Event {
-        @EmbeddedId
+    @EmbeddedId
     private SensorEventId id;
 
     @MapsId("sensorId")
