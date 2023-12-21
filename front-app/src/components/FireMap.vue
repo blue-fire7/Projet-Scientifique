@@ -6,13 +6,18 @@
 import { onMounted, ref, watch } from 'vue';
 
 import * as Leaflet from 'leaflet';
+import { storeToRefs } from 'pinia';
+import { useSensorStore } from '../store/sensorStore';
+import useAppOptionStore from '../store/optionStore';
 
 const map = ref();
 const mapContainer = ref();
 const coordinatesDisplay = ref('');
 
+const markers = ref([]);
+
 const props = defineProps({
-  sensors: {
+  fireSensors: {
     default: [],
     type: Array,
   },
@@ -21,8 +26,30 @@ const props = defineProps({
   },
 });
 
-watch(props.sensors, () => {
-  // placeMarkers(props.sensors);
+watch(
+  () => useSensorStore().fireSensors,
+  (val) => {
+    console.log('refresh');
+    reset();
+    placeMarkers(props.fireSensors);
+  },
+  { deep: true }
+);
+
+watch(
+  () => useAppOptionStore().showAllSensor,
+  () => {
+    console.log('ça change');
+    reset();
+    placeMarkers(props.fireSensors);
+  }
+);
+
+const iconSensor0 = Leaflet.icon({
+  iconUrl: './src/assets/sensors/sensor0.png',
+  iconSize: [32, 32], // Taille de l'icône [largeur, hauteur]
+  iconAnchor: [16, 32], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
+  popupAnchor: [0, -32], // Point d'ancrage du popup par rapport à l'icône
 });
 
 // Définissez une icône personnalisée pour les marqueurs
@@ -55,7 +82,9 @@ const truckIcon = Leaflet.icon({
 });
 
 const getIcon = (level) => {
-  if (level < 3) {
+  if (level < 1) {
+    return iconSensor0;
+  } else if (level < 3) {
     return iconSensor1;
   } else if (level < 6) {
     return iconSensor2;
@@ -64,17 +93,24 @@ const getIcon = (level) => {
   }
 };
 
-const placeMarkers = (markers) => {
-  markers.forEach((marker) => {
-    new Leaflet.Marker([marker.lat, marker.long], {
-      icon: getIcon(marker.level),
-    }).addTo(map.value);
+const placeMarkers = (fires) => {
+  fires.forEach((fire) => {
+    if (
+      (!useAppOptionStore().showAllSensor && fire.level && fire.level > 0) ||
+      useAppOptionStore().showAllSensor
+    ) {
+      let marker = new Leaflet.Marker([fire.latitude, fire.longitude], {
+        icon: getIcon(fire.level),
+      });
+      markers.value.push(marker);
+      marker.addTo(map.value);
+    }
   });
 };
 
 const placeTrucks = (trucks) => {
   trucks.forEach((truck) => {
-    new Leaflet.Marker([truck.position.lat, truck.position.long], {
+    new Leaflet.Marker([truck.position.latitude, truck.position.longitude], {
       icon: truckIcon,
     }).addTo(map.value);
   });
@@ -88,7 +124,7 @@ onMounted(() => {
       '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map.value);
 
-  placeMarkers(props.sensors);
+  placeMarkers(props.fireSensors);
   placeTrucks(props.trucks);
 
   // Ajoutez un gestionnaire d'événement de clic sur la carte
@@ -134,7 +170,7 @@ function reset() {
 
   // Supprimez tous les marqueurs de la carte
   map.value.eachLayer((layer) => {
-    if (layer instanceof L.Marker) {
+    if (layer instanceof Leaflet.Marker) {
       map.value.removeLayer(layer);
     }
   });

@@ -2,16 +2,19 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useSensorStore = defineStore('sensor', () => {
-  const sensors = ref([]);
+  const fireSensors = ref([]);
+  const truckSensors = ref([]);
 
-  function updateSensor(sensor) {
-    let oldSensor = sensors.find((s) => sensor.id === s.id);
+  function updateFireSensor(sensor) {
+    console.log('update fire sensor');
+    let oldSensor = fireSensors.value.find((s) => sensor.id === s.id);
     if (oldSensor) {
       oldSensor.level = sensor.level;
     } else {
-      sensors.value.push(sensor);
+      fireSensors.value.push(sensor);
+      console.log(fireSensors.value);
     }
   }
 
-  return { sensors };
+  return { fireSensors, truckSensors, updateFireSensor };
 });

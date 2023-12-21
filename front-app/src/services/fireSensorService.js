@@ -4,10 +4,10 @@ export default class FireService {
   constructor() {}
 
   async getFireSensors() {
-    if (import.meta.env.VITE_SERVER_URL) {
-      let result = await fetch(`${import.meta.env.VITE_SERVER_URL}/sensors`);
+    if (true) {
+      let result = await fetch(`https://a7062995db3c53.lhr.life/sensors`);
       let resultObject = await result.json();
-      console.log(resultObject);
+      useSensorStore().fireSensors = resultObject;
     } else {
       console.log('trigg');
       const store = useSensorStore();

@@ -1,7 +1,15 @@
 <template>
   <div style="display: flex">
-    <FireMap class="col-8" :sensors="sensorStore.sensors" :trucks="trucks" />
-    <MapCommand class="col-4" :sensors="sensorStore.sensors" :trucks="trucks" />
+    <FireMap
+      class="col-8"
+      :fireSensors="sensorStore.fireSensors"
+      :trucks="trucks"
+    />
+    <MapCommand
+      class="col-4"
+      :sensors="sensorStore.fireSensors"
+      :trucks="trucks"
+    />
   </div>
 </template>
 

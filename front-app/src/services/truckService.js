@@ -3,13 +3,13 @@ export default class TruckService {
 
   getTrucks() {
     return [
-      {
-        truckId: 1,
-        position: {
-          lat: 45.785836,
-          long: 4.903327,
-        },
-      },
+      // {
+      //   truckId: 1,
+      //   position: {
+      //     latitude: 45.785836,
+      //     longitude: 4.903327,
+      //   },
+      // },
     ];
   }
 }

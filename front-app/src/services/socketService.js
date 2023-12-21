@@ -3,15 +3,15 @@ import { useSensorStore } from '../store/sensorStore';
 
 export default class SocketService {
   constructor() {
-    this.sensorStore = useSensorStore();
-
+    console.log('lancement socket');
     this.client = new Client({
-      brokerURL: 'ws://192.168.254.85:8080/ws',
+      brokerURL: 'wss://a7062995db3c53.lhr.life/ws',
 
       onConnect: () => {
-        this.client.subscribe('/topic/update/sensor', (msg) =>
-          this.sensorStore.updateSensor(JSON.parse(msg.body))
-        );
+        console.log('websocket connecté');
+        this.client.subscribe('/topic/update/sensor', (msg) => {
+          useSensorStore().updateFireSensor(JSON.parse(msg.body));
+        });
       },
 
       onWebSocketError: (error) => {
