@@ -19,11 +19,13 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import SensorService from '../services/SensorService';
+import * as Stomp from 'stompjs';
 import L from "leaflet";
 
 const listFires = ref([]);
 const map = ref(null);
 const coordinatesDisplay = ref("");
+const stompClient = ref(null);
 
 onMounted(() => {
   // Initialiser la carte Leaflet
@@ -32,6 +34,8 @@ onMounted(() => {
 
   // Charger les capteurs après l'initialisation de la carte
   loadSensors();
+
+  connectWebSocket();
 
   // Ajoutez un feu sur la carte
   map.value.on('click', addFireOnClick);
@@ -102,5 +106,46 @@ function launch() {
   console.log(fireData);
   
   SensorService.sensorsOnFire(fireData); 
+}
+
+function connectWebSocket() {
+  const socket = new WebSocket('ws://localhost:8080/ws'); // Remplacez l'URL par celle de votre serveur WebSocket
+
+  stompClient.value = Stomp.over(socket);
+
+  stompClient.value.connect({}, () => {
+    stompClient.value.subscribe('/topic/updateFireList', (message) => {
+      // Mettez à jour la liste des feux en fonction du message reçu
+      const updatedFires = JSON.parse(message.body);
+      updateFiresList(updatedFires);
+    });
+  });
+}
+
+function updateFiresList(updatedFires) {
+  console.log(updatedFires);
+  // Supprimez tous les feux actuels de la carte
+  listFires.value.forEach((fire) => {
+    map.value.removeLayer(fire);
+  });
+
+  // Effacez le tableau de feux
+  listFires.value = [];
+
+  // Ajoutez les feux mis à jour à la carte
+  updatedFires.forEach((fireData) => {
+    const fire = L.circle([fireData.latitude, fireData.longitude], {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5,
+      radius: fireData.diameter,
+    }).addTo(map.value);
+
+    // Ajoutez le nouveau GeoJSON à la liste
+    listFires.value.push(fire);
+  });
+
+  // Mettez à jour la chaîne de coordonnées à afficher après la mise à jour
+  updateCoordinatesDisplay();
 }
 </script>

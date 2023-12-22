@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const SENSOR_API_BASE_URL = 'http://localhost:8080/api/sensor'
-const FIRE_API_BASE_URL = 'http://localhost:8080/api/sensors-on-fire'
+const FIRE_API_BASE_URL = 'http://localhost:8080/api/add-fire'
 
 class SensorService {
     getSensors() {
