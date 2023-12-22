@@ -19,9 +19,6 @@ import java.util.Set;
 public class SensorImpl implements Sensor {
 
 
-    @Transient
-    Point position;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -35,9 +32,12 @@ public class SensorImpl implements Sensor {
     @Column(name = "latitude", nullable = false, precision = 9, scale = 6)
     private BigDecimal latitude;
 
-    @OneToMany(mappedBy = "sensor")
+    @OneToMany(mappedBy = "sensorImpl")
     private Set<SensorEvent> sensorEvents = new LinkedHashSet<>();
 
 
-
+    @Override
+    public Point getPosition() {
+        return new Point(this.longitude.doubleValue(), this.latitude.doubleValue());
+    }
 }

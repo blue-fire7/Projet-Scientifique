@@ -21,7 +21,7 @@ public class StationImpl implements Station{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
@@ -42,4 +42,8 @@ public class StationImpl implements Station{
         return new Point(this.latitude.doubleValue(), this.longitude.doubleValue());
     }
 
+    @Transient
+    public Point getPosition() {
+    return new Point(this.longitude.doubleValue(), this.latitude.doubleValue());
+    }
 }

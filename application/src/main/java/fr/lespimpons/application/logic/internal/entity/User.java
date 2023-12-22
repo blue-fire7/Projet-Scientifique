@@ -1,3 +1,4 @@
+/*
 package fr.lespimpons.application.logic.internal.entity;
 
 import jakarta.persistence.*;
@@ -20,3 +21,4 @@ public class User {
     private String mail;
 
 }
+*/

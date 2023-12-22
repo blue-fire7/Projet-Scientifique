@@ -12,8 +12,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "fire_truck_type")
-public class FireTruckType {
+@Table(name = "team")
+public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -21,14 +21,13 @@ public class FireTruckType {
 
     @Size(max = 50)
     @NotNull
-    @Column(name = "type", nullable = false, length = 50)
-    private String type;
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
 
-    @NotNull
-    @Column(name = "speed", nullable = false)
-    private Integer speed;
+    @OneToMany(mappedBy = "team")
+    private Set<FireFighter> fireFighters = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "fireTruckType")
-    private Set<FireTruck> fireTrucks = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "team")
+    private Set<Intervention> interventions = new LinkedHashSet<>();
 
 }

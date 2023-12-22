@@ -1,5 +1,6 @@
 package fr.lespimpons.application.logic;
 
+import fr.lespimpons.application.api.internal.controller.dto.FireSensorDto;
 import fr.lespimpons.application.api.internal.controller.dto.TruckSensorDto;
 import fr.lespimpons.application.logic.dto.SensorDto;
 import fr.lespimpons.application.logic.internal.service.SensorService;
@@ -32,9 +33,18 @@ public class LogicManagement {
 
     @Async
     @TransactionalEventListener
-    public void receiveFireEvent(TruckSensorDto truckSensorDto) {
+    public void receiveFireTruckEvent(TruckSensorDto truckSensorDto) {
         log.info("Received fire event: {}", truckSensorDto);
     }
+
+    @Async
+    @TransactionalEventListener
+    public void receiveSensorEvent(FireSensorDto fireSensorDto) {
+        log.info("Received fire event: {}", fireSensorDto);
+    }
+
+
+
 
     public List<SensorDto> getAllSensor() {
         return sensorService.getAllSensor();
