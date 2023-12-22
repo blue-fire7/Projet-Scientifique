@@ -17,9 +17,9 @@
         <input type="checkbox" v-model="showAllSensors" />
       </div>
 
-      <div class="flex flex-column gap-2">
+      <div class="flex flex-column">
         <!-- Sensors statut -->
-        <div v-if="props.sensors.length > 0">
+        <div v-if="props.sensors.length > 0" class="flex flex-column gap-1">
           <span class="size-xl"> État des capteurs </span>
           <div
             v-for="(sensor, index) in props.sensors.filter(

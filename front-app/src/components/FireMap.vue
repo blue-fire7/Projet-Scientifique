@@ -48,7 +48,7 @@ watch(
 const iconSensor0 = Leaflet.icon({
   iconUrl: './src/assets/sensors/sensor0.png',
   iconSize: [32, 32], // Taille de l'icône [largeur, hauteur]
-  iconAnchor: [16, 32], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
+  iconAnchor: [16, 16], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
   popupAnchor: [0, -32], // Point d'ancrage du popup par rapport à l'icône
 });
 
@@ -56,28 +56,28 @@ const iconSensor0 = Leaflet.icon({
 const iconSensor1 = Leaflet.icon({
   iconUrl: './src/assets/sensors/sensor1.png',
   iconSize: [32, 32], // Taille de l'icône [largeur, hauteur]
-  iconAnchor: [16, 32], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
+  iconAnchor: [16, 16], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
   popupAnchor: [0, -32], // Point d'ancrage du popup par rapport à l'icône
 });
 
 const iconSensor2 = Leaflet.icon({
   iconUrl: './src/assets/sensors/sensor2.png',
   iconSize: [32, 32], // Taille de l'icône [largeur, hauteur]
-  iconAnchor: [16, 32], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
+  iconAnchor: [16, 16], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
   popupAnchor: [0, -32], // Point d'ancrage du popup par rapport à l'icône
 });
 
 const iconSensor3 = Leaflet.icon({
   iconUrl: './src/assets/sensors/sensor3.png',
   iconSize: [32, 32], // Taille de l'icône [largeur, hauteur]
-  iconAnchor: [16, 32], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
+  iconAnchor: [16, 16], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
   popupAnchor: [0, -32], // Point d'ancrage du popup par rapport à l'icône
 });
 
 const truckIcon = Leaflet.icon({
   iconUrl: './src/assets/camion.png',
   iconSize: [64, 64], // Taille de l'icône [largeur, hauteur]
-  iconAnchor: [16, 32], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
+  iconAnchor: [32, 32], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
   popupAnchor: [0, -32], // Point d'ancrage du popup par rapport à l'icône
 });
 
@@ -93,6 +93,10 @@ const getIcon = (level) => {
   }
 };
 
+/**
+ * Place les marqueurs et les zones de feu sur la carte
+ * @param {Array} fires
+ */
 const placeMarkers = (fires) => {
   fires.forEach((fire) => {
     if (
@@ -106,6 +110,24 @@ const placeMarkers = (fires) => {
       marker.addTo(map.value);
     }
   });
+
+  let fireOn = [];
+  fires
+    .filter((fire) => fire.level > 0)
+    .forEach((fire) => {
+      // if (fire.level > 0) {
+      //   let circle = new Leaflet.Circle([fire.latitude, fire.longitude], {
+      //     radius: fire.level * 100,
+      //     interactive: false,
+      //     color: 'red',
+      //   });
+      //   circle.addTo(map.value);
+      // }
+      fireOn.push([fire.latitude, fire.longitude]);
+    });
+  if (fireOn.length > 0) {
+    Leaflet.polygon(fireOn, { weight: 40, color: 'red' }).addTo(map.value);
+  }
 };
 
 const placeTrucks = (trucks) => {

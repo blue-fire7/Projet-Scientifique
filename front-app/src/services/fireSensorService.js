@@ -5,7 +5,7 @@ export default class FireService {
 
   async getFireSensors() {
     if (true) {
-      let result = await fetch(`https://a7062995db3c53.lhr.life/sensors`);
+      let result = await fetch(`https://593e6da2a2715d.lhr.life/sensors`);
       let resultObject = await result.json();
       useSensorStore().fireSensors = resultObject;
     } else {

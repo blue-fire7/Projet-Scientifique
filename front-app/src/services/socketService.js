@@ -5,7 +5,7 @@ export default class SocketService {
   constructor() {
     console.log('lancement socket');
     this.client = new Client({
-      brokerURL: 'wss://a7062995db3c53.lhr.life/ws',
+      brokerURL: 'wss://593e6da2a2715d.lhr.life/ws',
 
       onConnect: () => {
         console.log('websocket connecté');
