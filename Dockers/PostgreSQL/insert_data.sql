@@ -71,7 +71,7 @@ values
 
 
 insert into public.team
-	(id, latitude, longitude)
+	(id, name)
 values
 	(nextval('team_id_seq'::regclass), 'Alpha'),
 	(nextval('team_id_seq'::regclass), 'Bravo'),
@@ -82,7 +82,7 @@ values
 
 
 insert into fire_truck_type 
-(id, type_label, power_factor, speed)
+(id, label, power_factor, speed)
 values 
 	(1, 'grande échelle', 5, 80),
 	(2, 'pompe-tonne', 8, 50);
