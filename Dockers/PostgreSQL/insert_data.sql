@@ -99,3 +99,43 @@ VALUES(nextval('fire_truck_id_seq'::regclass), 1, 1, null, null),
 
 
 
+INSERT INTO public.fire_fighter
+(id, firstname, surname, energy, fire_station_id, team_id)
+
+VALUES
+(nextval('fire_fighter_id_seq'::regclass), 'John', 'Doe', 10, 1, 1),
+(nextval('fire_fighter_id_seq'::regclass), 'Jane', 'Smith', 10, 1, 1),
+(nextval('fire_fighter_id_seq'::regclass), 'Bob', 'Johnson', 10, 1, 1),
+(nextval('fire_fighter_id_seq'::regclass), 'Alice', 'Williams', 10, 1, 1),
+(nextval('fire_fighter_id_seq'::regclass), 'Charlie', 'Brown', 10, 1, 1),
+
+(nextval('fire_fighter_id_seq'::regclass), 'Emily', 'Davis', 10, 1, 2),
+(nextval('fire_fighter_id_seq'::regclass), 'Frank', 'Taylor', 10, 1, 2),
+(nextval('fire_fighter_id_seq'::regclass), 'Grace', 'Anderson', 10, 1, 2),
+(nextval('fire_fighter_id_seq'::regclass), 'Henry', 'Miller', 10, 1, 2),
+(nextval('fire_fighter_id_seq'::regclass), 'Isabel', 'Moore', 10, 1, 2),
+
+(nextval('fire_fighter_id_seq'::regclass), 'Jack', 'Harris', 10, 1, 3),
+(nextval('fire_fighter_id_seq'::regclass), 'Kelly', 'Clark', 10, 1, 3),
+(nextval('fire_fighter_id_seq'::regclass), 'Leo', 'Turner', 10, 1, 3),
+(nextval('fire_fighter_id_seq'::regclass), 'Mia', 'Baker', 10, 1, 3),
+(nextval('fire_fighter_id_seq'::regclass), 'Noah', 'White', 10, 1, 3),
+
+(nextval('fire_fighter_id_seq'::regclass), 'Olivia', 'Martin', 10, 2, 4),
+(nextval('fire_fighter_id_seq'::regclass), 'Peter', 'Allen', 10, 2, 4),
+(nextval('fire_fighter_id_seq'::regclass), 'Quinn', 'Young', 10, 2, 4),
+(nextval('fire_fighter_id_seq'::regclass), 'Rachel', 'Green', 10, 2, 4),
+(nextval('fire_fighter_id_seq'::regclass), 'Sam', 'Roberts', 10, 2, 4),
+
+(nextval('fire_fighter_id_seq'::regclass), 'Taylor', 'Adams', 10, 2, 5),
+(nextval('fire_fighter_id_seq'::regclass), 'Ulysses', 'Lee', 10, 2, 5),
+(nextval('fire_fighter_id_seq'::regclass), 'Violet', 'Fisher', 10, 2, 5),
+(nextval('fire_fighter_id_seq'::regclass), 'Walter', 'Morris', 10, 2, 5),
+(nextval('fire_fighter_id_seq'::regclass), 'Xena', 'Wright', 10, 2, 5),
+
+(nextval('fire_fighter_id_seq'::regclass), 'Yasmine', 'Evans', 10, 2, 6),
+(nextval('fire_fighter_id_seq'::regclass), 'Zane', 'Cooper', 10, 2, 6),
+(nextval('fire_fighter_id_seq'::regclass), 'Ava', 'Perez', 10, 2, 6),
+(nextval('fire_fighter_id_seq'::regclass), 'Ben', 'Garcia', 10, 2, 6),
+(nextval('fire_fighter_id_seq'::regclass), 'Chloe', 'Lopez', 10, 2, 6);
+
