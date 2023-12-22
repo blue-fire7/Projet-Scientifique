@@ -17,14 +17,20 @@ public class SensorEvent implements Event {
     @EmbeddedId
     private SensorEventId id;
 
-    @MapsId("sensorId")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sensor_id")
-    private SensorImpl sensor;
 
     @NotNull
     @Column(name = "level", nullable = false)
     private Integer level;
+
+    @MapsId("fireId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fire_id")
+    private FireImpl fireImpl;
+
+    @MapsId("sensorId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sensor_id")
+    private SensorImpl sensorImpl;
 
     @Override
     public LocalDateTime updateAt() {

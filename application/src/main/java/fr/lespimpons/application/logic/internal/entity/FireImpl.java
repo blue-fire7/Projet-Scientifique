@@ -3,18 +3,21 @@ package fr.lespimpons.application.logic.internal.entity;
 import fr.lespimpons.application.pojo.geometry.Circle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "fire")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class FireImpl implements Fire {
 
 
@@ -29,6 +32,12 @@ public class FireImpl implements Fire {
 
     @Column(name = "ended_at")
     private LocalDateTime endedAt;
+
+    @OneToMany(mappedBy = "fire")
+    private Set<Intervention> interventions = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "fireImpl")
+    private Set<SensorEvent> sensorEvents = new LinkedHashSet<>();
 
 
     @Override
