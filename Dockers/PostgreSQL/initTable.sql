@@ -3,7 +3,7 @@ drop table if exists fire;
 drop table if exists sensor_event;
 drop table if exists team;
 drop table if exists fire_station;
-drop table if exists fire_truck;
+drop table if exists fire_truck cascade;
 drop table if exists fire_truck_type;
 create table sensor(
   id serial primary key,
@@ -33,15 +33,16 @@ create table team(
 );
 create table fire_truck_type(
   id serial primary key,
-  type varchar(50) not null,
-  speed integer not null
+  label varchar(50) not null,
+  speed integer not null, -- Vitesse du véhicule
+  powerFactor integer not null --Puissance du véhicule
 );
 create table fire_truck(
   id serial primary key,
   fire_station_id bigint references fire_station(id) not null,
   fire_truck_type_id bigint references fire_truck_type(id) not null,
-  longitude decimal(9, 6) not null,
-  latitude decimal(9, 6) not null
+  longitude decimal(3, 20),
+  latitude decimal(3, 20)
 );
 create table intervention(
   team_id bigint references team(id) not null,

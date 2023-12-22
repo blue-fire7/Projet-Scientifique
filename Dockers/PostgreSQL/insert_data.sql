@@ -62,3 +62,40 @@ values
 	(nextval('sensor_id_seq'::regclass), 45.75094955555556, 4.907823777777778),
 	(nextval('sensor_id_seq'::regclass), 45.750195777777776, 4.912313888888889);
 
+insert into public.fire_station 
+	(id, latitude, longitude)
+values
+	(nextval('fire_station_id_seq'::regclass), 45.765070, 4.905230),
+	(nextval('fire_station_id_seq'::regclass), 45.778839, 4.878460)
+
+
+
+insert into public.team
+	(id, latitude, longitude)
+values
+	(nextval('team_id_seq'::regclass), 'Alpha'),
+	(nextval('team_id_seq'::regclass), 'Bravo'),
+	(nextval('team_id_seq'::regclass), 'Coca'),
+	(nextval('team_id_seq'::regclass), 'Delta'),
+	(nextval('team_id_seq'::regclass), 'Echo'),
+	(nextval('team_id_seq'::regclass), 'Foxtrot'),
+
+
+insert into fire_truck_type 
+(id, type_label, power_factor, speed)
+values 
+	(1, 'grande échelle', 5, 80),
+	(2, 'pompe-tonne', 8, 50);
+
+
+INSERT INTO public.fire_truck
+(id, fire_station_id, fire_truck_type_id, longitude, latitude)
+VALUES(nextval('fire_truck_id_seq'::regclass), 1, 1, null, null),
+(nextval('fire_truck_id_seq'::regclass), 1, 1, null, null),
+(nextval('fire_truck_id_seq'::regclass), 1, 2, null, null),
+(nextval('fire_truck_id_seq'::regclass), 2, 1, null, null),
+(nextval('fire_truck_id_seq'::regclass), 2, 1, null, null),
+(nextval('fire_truck_id_seq'::regclass), 2, 2, null, null);
+
+
+
