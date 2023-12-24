@@ -1,12 +1,18 @@
 package fr.lespimpons.application.logic.internal.repository;
 
+import fr.lespimpons.application.logic.internal.entity.FireTruck;
 import fr.lespimpons.application.logic.internal.entity.SensorEvent;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public interface SensorEventRepository {
+public class SensorEventRepositoryImpl extends Repository<SensorEvent> implements SensorEventRepository{
 
-    /*    @Query(value = """
+
+    @Override
+    public List<SensorEvent> findAllInAreaWithLevelN(double longitude, double latitude, double radius) {
+        Query nativeQuery = entityManager.createNativeQuery("""
                 SELECT
                 se.*
                 from sensor s
@@ -18,7 +24,10 @@ public interface SensorEventRepository {
                   and ST_DWithin(ST_MakePoint(s.longitude, s.latitude), ST_MakePoint(:longitude, :latitude), :radius )
                   and se.level > 0
                   and f.ended_at is null
-                            """, nativeQuery = true)*/
-    List<SensorEvent> findAllInAreaWithLevelN(double longitude, double latitude, double radius);
-
+                        """, FireTruck.class);
+        nativeQuery.setParameter("longitude", longitude);
+        nativeQuery.setParameter("latitude", latitude);
+        nativeQuery.setParameter("radius", radius);
+        return nativeQuery.getResultList();
+    }
 }

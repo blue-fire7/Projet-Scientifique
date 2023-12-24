@@ -33,6 +33,7 @@ public class FireService {
 
     private final EmergencyService emergencyService;
 
+    //TODO remove
     @PostConstruct
     @Transactional
     public void test() {
