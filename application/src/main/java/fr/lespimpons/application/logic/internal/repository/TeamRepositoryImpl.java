@@ -4,7 +4,17 @@ import fr.lespimpons.application.logic.internal.entity.Team;
 
 import java.util.List;
 
-public class TeamRepositoryImpl extends Repository<Team> implements TeamRepository{
+public class TeamRepositoryImpl extends Repository<Team, Long> implements TeamRepository{
+
+    private static TeamRepositoryImpl instance;
+
+
+    public static synchronized TeamRepositoryImpl getInstance() {
+        if (instance == null) {
+            instance = new TeamRepositoryImpl();
+        }
+        return instance;
+    }
 
     //TODO : pas bon
     @Override

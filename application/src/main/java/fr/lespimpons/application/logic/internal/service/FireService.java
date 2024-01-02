@@ -5,31 +5,28 @@ import fr.lespimpons.application.logic.internal.entity.FireImpl;
 import fr.lespimpons.application.logic.internal.entity.SensorEvent;
 import fr.lespimpons.application.logic.internal.entity.SensorEventId;
 import fr.lespimpons.application.logic.internal.entity.SensorImpl;
-import fr.lespimpons.application.logic.internal.repository.FireImplRepository;
-import fr.lespimpons.application.logic.internal.repository.SensorEventRepository;
-import fr.lespimpons.application.logic.internal.repository.SensorImplRepository;
+import fr.lespimpons.application.logic.internal.repository.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class FireService {
 
     private final static double RADIUS = 500d;
 
-    private final SensorEventRepository sensorEventRepository;
+    private final SensorEventRepositoryImpl sensorEventRepository;
 
-    private final SensorImplRepository sensorImplRepository;
+    private final SensorImplRepositoryImpl sensorImplRepository;
 
-    private final FireImplRepository fireImplRepository;
+    private final FireImplRepositoryImpl fireImplRepository;
 
     private final EmergencyService emergencyService;
 
@@ -48,7 +45,7 @@ public class FireService {
         // si oui on update le feu
         // si non on crée un feu
 
-        SensorImpl sensor = sensorImplRepository.findById(sensorDto.id()).orElseThrow();
+        SensorImpl sensor = sensorImplRepository.findById(sensorDto.id());
 
 
         //SI 0 ALORS ON REGARDE SI LE FEU EST FINI

@@ -7,7 +7,7 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public class SensorEventRepositoryImpl extends Repository<SensorEvent> implements SensorEventRepository{
+public class SensorEventRepositoryImpl extends Repository<SensorEvent, Long> implements SensorEventRepository{
 
 
     @Override

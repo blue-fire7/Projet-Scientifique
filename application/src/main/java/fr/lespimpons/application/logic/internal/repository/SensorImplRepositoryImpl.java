@@ -6,7 +6,11 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public class SensorImplRepositoryImpl extends Repository<SensorImpl> implements SensorImplRepository {
+public class SensorImplRepositoryImpl extends Repository<SensorImpl, Long> implements SensorImplRepository {
+
+
+    private static SensorImplRepositoryImpl sensorImplRepository;
+
     @Override
     public List<SensorDto> findAllDto() {
         TypedQuery<SensorDto> q = entityManager.createQuery("""
@@ -45,5 +49,13 @@ public class SensorImplRepositoryImpl extends Repository<SensorImpl> implements 
                                 ORDER BY se.id.updateAt DESC
                                 LIMIT 1
                 """, Integer.class).setParameter("sensorId", sensorId).getSingleResult();
+    }
+
+
+    public static SensorImplRepositoryImpl getInstance() {
+        if (sensorImplRepository == null) {
+            sensorImplRepository = new SensorImplRepositoryImpl();
+        }
+        return sensorImplRepository;
     }
 }

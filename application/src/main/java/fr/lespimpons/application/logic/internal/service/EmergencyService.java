@@ -1,5 +1,6 @@
 package fr.lespimpons.application.logic.internal.service;
 
+import com.jogamp.common.util.locks.SingletonInstance;
 import fr.lespimpons.application.logic.internal.entity.*;
 import fr.lespimpons.application.logic.internal.repository.*;
 import fr.lespimpons.application.logic.internal.utils.GeometryUtils;
@@ -14,13 +15,11 @@ import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
 @Getter
 @Setter
 public class EmergencyService {
-    private final InterventionRepository interventionRepository;
+    private final InterventionRepositoryImpl interventionRepository;
 
     private final StationImplRepository stationImplRepository;
 
@@ -29,6 +28,15 @@ public class EmergencyService {
     private final TeamRepository teamRepository;
 
     private final Queue<FireImpl> fireQueue = new ArrayDeque<>();
+
+
+    public EmergencyService() {
+        this.interventionRepository = InterventionRepositoryImpl.getInstance();
+        this.stationImplRepository = StationImplRepositoryImpl.getInstance();
+        this.fireImplRepository = FireImplRepositoryImpl.getInstance();
+        this.fireTruckRepository = FireTruckRepositoryImpl.getInstance();
+        this.teamRepository = TeamRepositoryImpl.getInstance();
+    }
 
     public void sendEmergency(Point position, FireImpl fire) {
         //on trouve la caserne la plus proche avec un camion et une équipe dispo
@@ -69,6 +77,7 @@ public class EmergencyService {
     }
 
 
-
-
+    public EmergencyService getInstance() {
+        return null;
+    }
 }

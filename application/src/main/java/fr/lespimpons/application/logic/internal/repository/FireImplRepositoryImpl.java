@@ -3,8 +3,17 @@ package fr.lespimpons.application.logic.internal.repository;
 import fr.lespimpons.application.logic.internal.entity.FireImpl;
 import jakarta.persistence.TypedQuery;
 
-public class FireImplRepositoryImpl extends Repository<FireImpl> implements FireImplRepository {
+public class FireImplRepositoryImpl extends Repository<FireImpl, Long> implements FireImplRepository {
 
+
+    private static FireImplRepositoryImpl instance;
+
+    public static FireImplRepository getInstance() {
+        if (instance == null) {
+            instance = new FireImplRepositoryImpl();
+        }
+        return instance;
+    }
 
     public FireImpl findLastFireBySensorId(Long SensorId) {
 

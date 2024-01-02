@@ -1,5 +1,6 @@
 package fr.lespimpons.application.api.internal.controller;
 
+import fr.lespimpons.application.api.ApiManagement;
 import fr.lespimpons.application.api.internal.controller.dto.FireSensorDto;
 import fr.lespimpons.application.api.internal.controller.dto.TruckSensorDto;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DataReceiverController {
 
+    private final ApiManagement apiManagement;
+
     @PostMapping("fire-sensor")
     public void receiveFireSensor(@RequestBody FireSensorDto fireSensorDto) {
-
+        apiManagement.receiveSensorEvent(fireSensorDto);
     }
 
     @PostMapping("truck-location")

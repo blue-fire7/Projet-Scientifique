@@ -4,10 +4,21 @@ import fr.lespimpons.application.logic.internal.entity.StationImpl;
 
 import java.util.List;
 
-public class StationImplRepositoryImpl extends Repository<StationImpl> implements StationImplRepository {
+public class StationImplRepositoryImpl extends Repository<StationImpl, Long> implements StationImplRepository {
+
+
+    private static StationImplRepositoryImpl instance;
+
+    public static StationImplRepository getInstance() {
+        if (instance == null) {
+            instance = new StationImplRepositoryImpl();
+        }
+        return instance;
+    }
+
     @Override
     public List<StationImpl> findWithDispo() {
-        List<StationImpl> resultList = entityManager.createNativeQuery("""
+        return entityManager.createNativeQuery("""
                             SELECT distinct fs.*
                             FROM fire_station fs
                                      LEFT JOIN fire_truck ft ON fs.id = ft.fire_station_id
@@ -20,6 +31,5 @@ public class StationImplRepositoryImpl extends Repository<StationImpl> implement
                             )
                             GROUP BY fs.id;
                 """, StationImpl.class).getResultList();
-        return resultList;
     }
 }

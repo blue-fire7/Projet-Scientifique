@@ -5,7 +5,16 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public class FireTruckRepositoryImpl extends Repository<FireTruck> implements FireTruckRepository {
+public class FireTruckRepositoryImpl extends Repository<FireTruck, Long> implements FireTruckRepository {
+
+    private static FireTruckRepositoryImpl instance;
+
+    public static FireTruckRepositoryImpl getInstance() {
+        if (instance == null) {
+            instance = new FireTruckRepositoryImpl();
+        }
+        return instance;
+    }
 
     @Override
     public List<FireTruck> findFireTruckDispoByStationId(Long stationId) {
