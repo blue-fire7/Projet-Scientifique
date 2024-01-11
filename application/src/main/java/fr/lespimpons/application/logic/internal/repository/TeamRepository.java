@@ -1,17 +1,14 @@
 package fr.lespimpons.application.logic.internal.repository;
 
-import fr.lespimpons.application.logic.internal.entity.FireTruck;
 import fr.lespimpons.application.logic.internal.entity.Team;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface TeamRepository extends JpaRepository<Team, Long> {
+public interface TeamRepository {
 
 
     //TODO: pas bon
-    @Query(value = """
+/*    @Query(value = """
     SELECT t
     FROM Team t
     WHERE EXISTS (
@@ -23,6 +20,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
         JOIN FireImpl f ON i.fire = f
         WHERE i.team.id = t.id AND f.endedAt IS NULL
     )
-""")
+""")*/
     List<Team> findTeamDispoByStationId(Long stationId);
 }

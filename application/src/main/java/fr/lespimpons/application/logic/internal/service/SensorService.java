@@ -1,28 +1,35 @@
 package fr.lespimpons.application.logic.internal.service;
 
 import fr.lespimpons.application.logic.dto.SensorDto;
-import fr.lespimpons.application.logic.internal.mapper.SensorMapper;
 import fr.lespimpons.application.logic.internal.repository.SensorImplRepository;
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
+import fr.lespimpons.application.logic.internal.repository.SensorImplRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
 public class SensorService {
 
-
+    private static SensorService instance;
     private final SensorImplRepository sensorImplRepository;
+
+    private SensorService() {
+        this.sensorImplRepository = SensorImplRepositoryImpl.getInstance();
+    }
+
+    public static SensorService getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (SensorService.class) {
+            if (instance == null) {
+                instance = new SensorService();
+            }
+        }
+        return instance;
+    }
 
     public List<SensorDto> getAllSensor() {
         return sensorImplRepository.findAllDto();
     }
-
-
-
 }

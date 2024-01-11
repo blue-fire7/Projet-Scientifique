@@ -5,30 +5,45 @@ import fr.lespimpons.application.logic.internal.repository.*;
 import fr.lespimpons.application.logic.internal.utils.GeometryUtils;
 import fr.lespimpons.application.pojo.geometry.Point;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
 @Getter
 @Setter
 public class EmergencyService {
-    private final InterventionRepository interventionRepository;
-
+    private static EmergencyService instance;
+    private final InterventionRepositoryImpl interventionRepository;
     private final StationImplRepository stationImplRepository;
-
     private final FireImplRepository fireImplRepository;
     private final FireTruckRepository fireTruckRepository;
     private final TeamRepository teamRepository;
-
     private final Queue<FireImpl> fireQueue = new ArrayDeque<>();
+
+    private EmergencyService() {
+        this.interventionRepository = InterventionRepositoryImpl.getInstance();
+        this.stationImplRepository = StationImplRepositoryImpl.getInstance();
+        this.fireImplRepository = FireImplRepositoryImpl.getInstance();
+        this.fireTruckRepository = FireTruckRepositoryImpl.getInstance();
+        this.teamRepository = TeamRepositoryImpl.getInstance();
+    }
+
+    public static EmergencyService getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (EmergencyService.class) {
+            if (instance == null) {
+                instance = new EmergencyService();
+            }
+        }
+        return instance;
+    }
+
 
     public void sendEmergency(Point position, FireImpl fire) {
         //on trouve la caserne la plus proche avec un camion et une équipe dispo
@@ -43,7 +58,7 @@ public class EmergencyService {
             return Double.compare(distance1, distance2);
         });
 
-        if(stations.isEmpty()) {
+        if (stations.isEmpty()) {
             log.info("No station available");
             fireQueue.add(fire);
             return;
@@ -53,22 +68,20 @@ public class EmergencyService {
         List<Team> teams = teamRepository.findTeamDispoByStationId(stations.get(0).getId());
 
         //
-       Intervention intervention = Intervention
+        Intervention intervention = Intervention
                 .builder()
                 .id(InterventionId.builder()
-     /*                   .fireId(fire.getId())
-                        .fireTruckId(fireTrucks.get(0).getId())
-                        .teamId(teams.get(0).getId())*/
+                        /*                   .fireId(fire.getId())
+                                           .fireTruckId(fireTrucks.get(0).getId())
+                                           .teamId(teams.get(0).getId())*/
                         .build())
-               .team(teams.get(0))
-               .fire(fire)
-               .fireTruck(fireTrucks.get(0))
+                .team(teams.get(0))
+                .fire(fire)
+                .fireTruck(fireTrucks.get(0))
                 .build();
 
-        interventionRepository.save(intervention);
+        interventionRepository.saveAndFlush(intervention);
     }
-
-
 
 
 }

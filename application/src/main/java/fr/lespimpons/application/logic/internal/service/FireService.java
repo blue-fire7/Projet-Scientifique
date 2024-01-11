@@ -5,40 +5,52 @@ import fr.lespimpons.application.logic.internal.entity.FireImpl;
 import fr.lespimpons.application.logic.internal.entity.SensorEvent;
 import fr.lespimpons.application.logic.internal.entity.SensorEventId;
 import fr.lespimpons.application.logic.internal.entity.SensorImpl;
-import fr.lespimpons.application.logic.internal.repository.FireImplRepository;
-import fr.lespimpons.application.logic.internal.repository.SensorEventRepository;
-import fr.lespimpons.application.logic.internal.repository.SensorImplRepository;
+import fr.lespimpons.application.logic.internal.repository.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Slf4j
-@Service
-@RequiredArgsConstructor
 public class FireService {
 
     private final static double RADIUS = 500d;
 
-    private final SensorEventRepository sensorEventRepository;
+    private final SensorEventRepositoryImpl sensorEventRepository;
 
-    private final SensorImplRepository sensorImplRepository;
+    private final SensorImplRepositoryImpl sensorImplRepository;
 
-    private final FireImplRepository fireImplRepository;
+    private final FireImplRepositoryImpl fireImplRepository;
 
     private final EmergencyService emergencyService;
 
-    @PostConstruct
-    @Transactional
-    public void test() {
-        FireSensorDto fireSensorDto = new FireSensorDto(1L, 1, LocalDateTime.now());
-        updateFire(fireSensorDto);
+
+    private static FireService instance;
+
+    public static FireService getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (FireService.class) {
+            if (instance == null) {
+                instance = new FireService();
+            }
+        }
+        return instance;
     }
+
+    private FireService() {
+        this.sensorEventRepository = SensorEventRepositoryImpl.getInstance();
+        this.sensorImplRepository = SensorImplRepositoryImpl.getInstance();
+        this.fireImplRepository = FireImplRepositoryImpl.getInstance();
+        this.emergencyService = EmergencyService.getInstance();
+    }
+
 
     @Transactional
     public void updateFire(FireSensorDto sensorDto) {
@@ -47,7 +59,7 @@ public class FireService {
         // si oui on update le feu
         // si non on crée un feu
 
-        SensorImpl sensor = sensorImplRepository.findById(sensorDto.id()).orElseThrow();
+        SensorImpl sensor = sensorImplRepository.findById(sensorDto.id());
 
 
         //SI 0 ALORS ON REGARDE SI LE FEU EST FINI
@@ -116,7 +128,7 @@ public class FireService {
 
         SensorEvent sensorEvent = SensorEvent.builder()
                 .id(SensorEventId.builder().fireId(fire.getId()).sensorId(sensor.getId()).updateAt(LocalDateTime.now())
-                        .build()).level(intensity).fireImpl(fire).sensorImpl(sensor).build();
+                        .build()).level(intensity).sensorImpl(sensor).fireImpl(fire).build();
 
         return sensorEventRepository.saveAndFlush(sensorEvent);
 
