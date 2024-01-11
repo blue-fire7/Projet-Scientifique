@@ -2,7 +2,6 @@ package fr.lespimpons.application.api;
 
 import fr.lespimpons.application.api.internal.controller.dto.FireSensorDto;
 import fr.lespimpons.application.api.internal.service.WebsocketService;
-import fr.lespimpons.application.event.EventListener;
 import fr.lespimpons.application.event.EventService;
 import fr.lespimpons.application.logic.dto.FireDto;
 import fr.lespimpons.application.logic.dto.SensorDto;
@@ -22,15 +21,15 @@ public class ApiManagement {
 
 
     public ApiManagement(WebsocketService websocketService) {
-        EventService.getInstance().addListener(FireDto.class, event -> new FireListener().onEvent(event));
+  /*      EventService.getInstance().addListener(FireDto.class, event -> new FireListener().onEvent(event));
         EventService.getInstance().addListener(SensorDto.class, event -> new SensorListener().onEvent(event));
-
+*/
         this.websocketService = websocketService;
     }
 
 
 
-    private class FireListener implements EventListener<FireDto> {
+/*    private class FireListener implements EventListener {
 
         @Override
         public void onEvent(Object event) {
@@ -38,16 +37,16 @@ public class ApiManagement {
             log.info("Received fire event: {}", event);
 
         }
-    }
+    }*/
 
-    private class SensorListener implements EventListener<SensorDto> {
+/*    private class SensorListener implements EventListener {
 
         @Override
         public void onEvent(Object event) {
             websocketService.updateSensor((SensorDto) event);
             log.info("Received fire event: {}", event);
         }
-    }
+    }*/
 
 
     public void receiveFireEvent(FireDto fire) {

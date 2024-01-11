@@ -8,7 +8,7 @@ public class FireImplRepositoryImpl extends Repository<FireImpl, Long> implement
 
     private static FireImplRepositoryImpl instance;
 
-    public static FireImplRepository getInstance() {
+    public static FireImplRepositoryImpl getInstance() {
         if (instance == null) {
             instance = new FireImplRepositoryImpl();
         }

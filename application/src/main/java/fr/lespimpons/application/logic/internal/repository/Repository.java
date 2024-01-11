@@ -2,6 +2,7 @@ package fr.lespimpons.application.logic.internal.repository;
 
 import fr.lespimpons.application.logic.internal.service.EntityManagerService;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -48,6 +49,7 @@ public abstract class Repository<T, ID> {
         return entityManager.createQuery("SELECT t FROM " + clazz.getSimpleName() + " t", clazz).getResultList();
     }
 
+    @Transactional
     public T findById(ID id) {
         return entityManager.find(clazz, id);
     }

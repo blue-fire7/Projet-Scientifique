@@ -1,6 +1,8 @@
 package fr.lespimpons.application.event;
 
-public interface EventListener<T> {
+@FunctionalInterface
+public interface EventListener {
 
-    void onEvent(Object event);
+    Object apply(Object event) throws Exception;
+
 }

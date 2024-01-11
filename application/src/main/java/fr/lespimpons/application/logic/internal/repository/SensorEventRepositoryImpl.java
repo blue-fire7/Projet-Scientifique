@@ -9,6 +9,25 @@ import java.util.List;
 
 public class SensorEventRepositoryImpl extends Repository<SensorEvent, Long> implements SensorEventRepository{
 
+    private static SensorEventRepositoryImpl instance;
+
+
+    private SensorEventRepositoryImpl() {
+        super();
+    }
+
+    public static SensorEventRepositoryImpl getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (SensorEventRepositoryImpl.class) {
+            if (instance == null) {
+                instance = new SensorEventRepositoryImpl();
+            }
+        }
+        return instance;
+    }
+
 
     @Override
     public List<SensorEvent> findAllInAreaWithLevelN(double longitude, double latitude, double radius) {
@@ -24,7 +43,7 @@ public class SensorEventRepositoryImpl extends Repository<SensorEvent, Long> imp
                   and ST_DWithin(ST_MakePoint(s.longitude, s.latitude), ST_MakePoint(:longitude, :latitude), :radius )
                   and se.level > 0
                   and f.ended_at is null
-                        """, FireTruck.class);
+                        """, SensorEvent.class);
         nativeQuery.setParameter("longitude", longitude);
         nativeQuery.setParameter("latitude", latitude);
         nativeQuery.setParameter("radius", radius);

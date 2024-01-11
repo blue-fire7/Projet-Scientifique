@@ -6,13 +6,11 @@ import fr.lespimpons.application.logic.internal.repository.SensorImplRepositoryI
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 public class SensorService {
 
-
-    private static SensorService sensorService;
+    private static SensorService instance;
     private final SensorImplRepository sensorImplRepository;
 
     private SensorService() {
@@ -20,7 +18,15 @@ public class SensorService {
     }
 
     public static SensorService getInstance() {
-        return Objects.requireNonNullElseGet(sensorService, SensorService::new);
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (SensorService.class) {
+            if (instance == null) {
+                instance = new SensorService();
+            }
+        }
+        return instance;
     }
 
     public List<SensorDto> getAllSensor() {

@@ -9,24 +9,23 @@ public class EntityManagerService {
 
     private static EntityManagerService instance;
 
-    private EntityManagerService(){
+    private EntityManagerFactory emf;
+
+    private EntityManagerService() {
     }
-
-
-    public EntityManager getEntityManager() {
-        try (EntityManagerFactory emf = Persistence.createEntityManagerFactory("fr.lespimpons.application.logic.internal.entity")) {
-            return emf.createEntityManager();
-        }
-
-    }
-
-
 
     public static synchronized EntityManagerService getInstance() {
         if (instance == null) {
             instance = new EntityManagerService();
         }
         return instance;
+    }
+
+    public EntityManager getEntityManager() {
+        if (emf == null || !emf.isOpen()) {
+            emf = Persistence.createEntityManagerFactory("fr.lespimpons.application.logic.internal.entity");
+        }
+        return emf.createEntityManager();
     }
 
 

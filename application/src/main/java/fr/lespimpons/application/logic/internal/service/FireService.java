@@ -17,7 +17,6 @@ import java.util.List;
 
 
 @Slf4j
-@RequiredArgsConstructor
 public class FireService {
 
     private final static double RADIUS = 500d;
@@ -30,13 +29,28 @@ public class FireService {
 
     private final EmergencyService emergencyService;
 
-    //TODO remove
-    @PostConstruct
-    @Transactional
-    public void test() {
-        FireSensorDto fireSensorDto = new FireSensorDto(1L, 1, LocalDateTime.now());
-        updateFire(fireSensorDto);
+
+    private static FireService instance;
+
+    public static FireService getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (FireService.class) {
+            if (instance == null) {
+                instance = new FireService();
+            }
+        }
+        return instance;
     }
+
+    private FireService() {
+        this.sensorEventRepository = SensorEventRepositoryImpl.getInstance();
+        this.sensorImplRepository = SensorImplRepositoryImpl.getInstance();
+        this.fireImplRepository = FireImplRepositoryImpl.getInstance();
+        this.emergencyService = EmergencyService.getInstance();
+    }
+
 
     @Transactional
     public void updateFire(FireSensorDto sensorDto) {
