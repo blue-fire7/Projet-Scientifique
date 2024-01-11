@@ -8,6 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface InterventionRepository extends JpaRepository<Intervention, InterventionId> {
-    @Query(value = "SELECT DISTINCT id FROM fire WHERE fire.id NOT IN (SELECT DISTINCT fire_id FROM Intervention)", nativeQuery = true)
-    List<Long> findFireIdsWithoutIntervention();
+    List<Intervention> findInterventionsByFire_Id(Long fireId);
 }

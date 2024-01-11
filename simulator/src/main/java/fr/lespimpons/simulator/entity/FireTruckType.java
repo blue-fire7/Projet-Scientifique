@@ -30,6 +30,10 @@ public class FireTruckType {
     @Column(name = "speed", nullable = false)
     private Integer speed;
 
+    @NotNull
+    @Column(name = "power_factor", nullable = false)
+    private Integer powerFactor;
+
     @OneToMany(mappedBy = "fireTruckType")
     private Set<FireTruck> fireTrucks = new LinkedHashSet<>();
 

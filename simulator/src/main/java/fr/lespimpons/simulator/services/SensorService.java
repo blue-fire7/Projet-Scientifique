@@ -1,5 +1,6 @@
 package fr.lespimpons.simulator.services;
 
+import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.entity.Sensor;
 import fr.lespimpons.simulator.entity.SensorEvent;
 import fr.lespimpons.simulator.repository.FireRepository;
@@ -25,15 +26,9 @@ public class SensorService {
     public List<Sensor> findAll() {
         return repository.findAll();
     }
-    public List<Long> findFireIdsWithoutIntervention(){
-        return interventionRepository.findFireIdsWithoutIntervention();
-    }
-    public List<Long> findSensorsByFireIds(List<Long> fireIds){
-        return sensorEventRepository.findSensorsByFireIds(fireIds);
-    }
 
-    public SensorEvent findSensorEventBySensorId(Long sensorId){
-        return sensorEventRepository.findSensorEventBySensorId(sensorId);
+    public List<Intervention> findInterventionByFireId(Long fireId){
+        return interventionRepository.findInterventionsByFire_Id(fireId);
     }
 
 

@@ -25,19 +25,25 @@ public class Scheduler {
         this.webSocketService = webSocketService;
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 10000)
     public void scheduler() throws InterruptedException {
 
+        System.out.println("wait");
         //Récupération de la liste des feux
         List<Fire> fireList = FireSingleton.getInstance().getFireList();
 
         //Augmentation de la puissance
         for (Fire fire : fireList){
-            fire.setDiameter(fire.getDiameter() + 100);
-            System.out.println("Fire : " +fire.getLatitude() + fire.getLongitude()+" Diamètre : "+fire.getDiameter());
+            fire.setDiameter(fire.getDiameter() + 50);
+            System.out.println("Fire : id : " +fire.getId() + " Lat : "+fire.getLatitude() + " Long : " + fire.getLongitude()+" Diamètre : "+fire.getDiameter());
         }
 
-        System.out.println("wait");
+        //Diminution de la puissance
+        sensorController.checkFires(fireList);
+
+        for (Fire fire : fireList){
+            System.out.println("Fire : id : " +fire.getId() + " Diamètre : "+fire.getDiameter());
+        }
 
         //Envoie des capteurs touchés
         sensorController.sensorsOnFire(fireList);

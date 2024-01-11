@@ -2,16 +2,26 @@ package fr.lespimpons.simulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.lespimpons.application.logic.internal.entity.Team;
+import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.entity.Sensor;
 import fr.lespimpons.simulator.object.Fire;
 import fr.lespimpons.simulator.services.SensorService;
 import fr.lespimpons.simulator.component.FireSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -19,6 +29,12 @@ import java.util.List;
 public class SensorController {
     @Autowired
     private SensorService service;
+
+    private final RestTemplate restTemplate;
+
+    public SensorController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @GetMapping("/sensor")
     public List<Sensor> findAll() {
@@ -52,19 +68,34 @@ public class SensorController {
         sendData(convertObjectToJson(sensorOnFireList));
     }
 
-    public void sendData(String json) {
-        //checkFires();
-        System.out.println(json);
+    @PostMapping("/send-data")
+    public ResponseEntity<String> sendData(@RequestBody String json) {
+        // Logique de traitement des données (à adapter selon vos besoins)
+        System.out.println("JSON data: " + json);
+
+        // Exemple de requête HTTP POST vers le localhost (ajustez l'URL en fonction de votre configuration)
+        String url = "http://postman-echo.com/post"; // Remplacez par l'URL de votre endpoint
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, json, String.class);
+
+        // Logique de traitement de la réponse (à adapter selon vos besoins)
+        String responseBody = responseEntity.getBody();
+        System.out.println("Response from server: " + responseBody);
+
+        return responseEntity;
     }
 
-    public void checkFires(){
-        List<Long> fireIdsList = service.findFireIdsWithoutIntervention();
-        List<Long> sensorIds = service.findSensorsByFireIds(fireIdsList);
+    @Transactional
+    public void checkFires(List<Fire> listFire){
 
-        List<SensorOnFire> sensorOnFireList = new ArrayList<>();
+        for (Fire fire : listFire){
+            List<Intervention> interventionList = service.findInterventionByFireId(fire.getId());
 
-        for (Long id : sensorIds){
-            System.out.println("Sensor : "+id);
+            if (interventionList != null){
+                for (Intervention intervention : interventionList){
+                    int puissance = intervention.getFireTruck().getFireTruckType().getPowerFactor() * 10;
+                    fire.setDiameter(fire.getDiameter() - puissance);
+                }
+            }
         }
     }
 
@@ -84,6 +115,9 @@ public class SensorController {
     public long calculateIntensity(double distance, double radius) {
         long nb = Math.round(radius) - Math.round(distance);
         long result = (nb * 100 / Math.round(radius)) / 10;
+        if (result == 0){
+            result = 1;
+        }
         return Math.round(result);
     }
 
