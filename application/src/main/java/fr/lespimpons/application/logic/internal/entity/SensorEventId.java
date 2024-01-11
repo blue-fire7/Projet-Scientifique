@@ -29,7 +29,6 @@ public class SensorEventId implements Serializable {
     @Column(name = "fire_id", nullable = false)
     private Long fireId;
 
-    @NotNull
     @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
 

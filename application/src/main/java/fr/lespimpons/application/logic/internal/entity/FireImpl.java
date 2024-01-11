@@ -4,6 +4,7 @@ import fr.lespimpons.application.pojo.geometry.Circle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -26,7 +27,6 @@ public class FireImpl implements Fire {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
     @Column(name = "started_at", nullable = false)
     private LocalDateTime startedAt;
 

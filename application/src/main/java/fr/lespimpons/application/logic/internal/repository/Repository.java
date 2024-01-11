@@ -18,33 +18,46 @@ public abstract class Repository<T, ID> {
         this.entityManager = EntityManagerService.getInstance().getEntityManager();
     }
 
-
-    public void save(T object) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(object);
-        entityManager.getTransaction().commit();
-    }
-
+    @Transactional
     public T saveAndFlush(T object) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(object);
+        if (!entityManager.getTransaction().isActive()) {
+            entityManager.getTransaction().begin();
+        }
+        object = this.save(object);
         entityManager.flush();
         entityManager.getTransaction().commit();
         return object;
     }
 
+    @Transactional
+    public T save(T object) {
+        if (this.isPersisted(object)) {
+            entityManager.persist(object);
+            return object;
+        }
+        return entityManager.merge(object);
+    }
+
+
+    @Transactional
     public void update(T object) {
-        entityManager.getTransaction().begin();
+        if (!entityManager.getTransaction().isActive()) {
+            entityManager.getTransaction().begin();
+        }
         entityManager.merge(object);
         entityManager.getTransaction().commit();
     }
 
+    @Transactional
     public void delete(T object) {
-        entityManager.getTransaction().begin();
+        if (!entityManager.getTransaction().isActive()) {
+            entityManager.getTransaction().begin();
+        }
         entityManager.remove(object);
         entityManager.getTransaction().commit();
     }
 
+    @Transactional
     public List<T> findAll() {
         return entityManager.createQuery("SELECT t FROM " + clazz.getSimpleName() + " t", clazz).getResultList();
     }
@@ -54,6 +67,7 @@ public abstract class Repository<T, ID> {
         return entityManager.find(clazz, id);
     }
 
+    @Transactional
     public void deleteById(ID id) {
         T object = findById(id);
         delete(object);
@@ -63,6 +77,10 @@ public abstract class Repository<T, ID> {
     @SuppressWarnings("unchecked")
     private Class<T> reflectClassType() {
         return ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
+    }
+
+    private boolean isPersisted(T object) {
+        return entityManager.contains(object);
     }
 
 }

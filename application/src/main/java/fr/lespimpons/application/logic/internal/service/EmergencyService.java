@@ -80,7 +80,7 @@ public class EmergencyService {
                 .fireTruck(fireTrucks.get(0))
                 .build();
 
-        interventionRepository.save(intervention);
+        interventionRepository.saveAndFlush(intervention);
     }
 
 

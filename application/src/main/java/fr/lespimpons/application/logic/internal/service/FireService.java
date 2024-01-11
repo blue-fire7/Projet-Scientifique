@@ -128,7 +128,7 @@ public class FireService {
 
         SensorEvent sensorEvent = SensorEvent.builder()
                 .id(SensorEventId.builder().fireId(fire.getId()).sensorId(sensor.getId()).updateAt(LocalDateTime.now())
-                        .build()).level(intensity).fireImpl(fire).sensorImpl(sensor).build();
+                        .build()).level(intensity).sensorImpl(sensor).fireImpl(fire).build();
 
         return sensorEventRepository.saveAndFlush(sensorEvent);
 
