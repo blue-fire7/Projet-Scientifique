@@ -25,7 +25,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin(origins="*")
 public class SensorController {
     @Autowired
     private SensorService service;
@@ -71,7 +71,7 @@ public class SensorController {
     @PostMapping("/send-data")
     public ResponseEntity<String> sendData(@RequestBody String json) {
         // Logique de traitement des données (à adapter selon vos besoins)
-        System.out.println("JSON data: " + json);
+//        System.out.println("JSON data: " + json);
 
         // Exemple de requête HTTP POST vers le localhost (ajustez l'URL en fonction de votre configuration)
         String url = "http://postman-echo.com/post"; // Remplacez par l'URL de votre endpoint
@@ -79,7 +79,7 @@ public class SensorController {
 
         // Logique de traitement de la réponse (à adapter selon vos besoins)
         String responseBody = responseEntity.getBody();
-        System.out.println("Response from server: " + responseBody);
+//        System.out.println("Response from server: " + responseBody);
 
         return responseEntity;
     }
