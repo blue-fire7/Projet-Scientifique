@@ -46,6 +46,7 @@ const fireStore = useFireStore();
 const socketService = new SocketService();
 
 const fireCircles = ref({});
+const truckIcons = ref({});
 
 watch(
   () => fireStore.fireList,
@@ -61,6 +62,23 @@ watch(
           radius: 10,
         }).addTo(map.value);
         fireCircles.value[fire.id] = circle;
+      }
+    });
+  },
+  { deep: true }
+);
+
+watch(
+  () => fireStore.truckList,
+  () => {
+    fireStore.truckList.forEach((truck) => {
+      if (truckIcons.value[truck.id]) {
+        truckIcons.value[truck.id].setLatLng([truck.latitude, truck.longitude]);
+      } else {
+        let marker = L.marker([truck.latitude, truck.longitude]).addTo(
+          map.value
+        );
+        truckIcons.value[truck.id] = marker;
       }
     });
   },
