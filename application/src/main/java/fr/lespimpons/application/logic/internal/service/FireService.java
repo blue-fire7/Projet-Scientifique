@@ -1,18 +1,19 @@
 package fr.lespimpons.application.logic.internal.service;
 
 import fr.lespimpons.application.api.internal.controller.dto.FireSensorDto;
+import fr.lespimpons.application.api.internal.controller.dto.TruckSensorDtoFromApi;
 import fr.lespimpons.application.event.EventService;
-import fr.lespimpons.application.logic.internal.entity.FireImpl;
-import fr.lespimpons.application.logic.internal.entity.SensorEventId;
-import fr.lespimpons.application.logic.internal.entity.SensorEventImpl;
-import fr.lespimpons.application.logic.internal.entity.SensorImpl;
+import fr.lespimpons.application.logic.dto.FireTruckDto;
+import fr.lespimpons.application.logic.internal.entity.*;
 import fr.lespimpons.application.logic.internal.mapper.SensorMapper;
 import fr.lespimpons.application.logic.internal.repository.FireImplRepositoryImpl;
+import fr.lespimpons.application.logic.internal.repository.FireTruckRepositoryImpl;
 import fr.lespimpons.application.logic.internal.repository.SensorEventRepositoryImpl;
 import fr.lespimpons.application.logic.internal.repository.SensorImplRepositoryImpl;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,6 +28,8 @@ public class FireService {
     private final FireImplRepositoryImpl fireImplRepository;
     private final EmergencyService emergencyService;
     private final EventService eventService;
+    private final FireTruckRepositoryImpl fireTruckRepository;
+
 
     private FireService() {
         this.eventService = EventService.getInstance();
@@ -34,7 +37,7 @@ public class FireService {
         this.sensorImplRepository = SensorImplRepositoryImpl.getInstance();
         this.fireImplRepository = FireImplRepositoryImpl.getInstance();
         this.emergencyService = EmergencyService.getInstance();
-
+        this.fireTruckRepository = FireTruckRepositoryImpl.getInstance();
     }
 
     public static FireService getInstance() {
@@ -160,4 +163,15 @@ public class FireService {
     }
 
 
+    public FireTruck updateTruckLocation(TruckSensorDtoFromApi truckSensorDtoFromApi) {
+        FireTruck fireTruck = fireTruckRepository.findById(truckSensorDtoFromApi.id());
+        fireTruck.setLatitude(BigDecimal.valueOf(truckSensorDtoFromApi.latitude()));
+        fireTruck.setLongitude(BigDecimal.valueOf(truckSensorDtoFromApi.longitude()));
+        fireTruck = fireTruckRepository.saveAndFlush(fireTruck);
+
+        FireTruckDto fireTruckDto = new FireTruckDto(fireTruck.getId(), fireTruck.getLongitude()
+                .doubleValue(), fireTruck.getLatitude().doubleValue(), fireTruck.getFireTruckType().getType());
+        eventService.publishEvent(fireTruckDto);
+        return fireTruck;
+    }
 }

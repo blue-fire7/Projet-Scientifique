@@ -20,13 +20,18 @@ public class EventService {
     private EventService() {
         this.executorService = Executors.newCachedThreadPool();
         this.listeners = new HashMap<>();
-
-        this.getAllListener();
+        this.initializeListenersFromAnnotatedMethods();
     }
 
-    public static synchronized EventService getInstance() {
-        if (instance == null) {
-            instance = new EventService();
+
+    public static EventService getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (EventService.class) {
+            if (instance == null) {
+                instance = new EventService();
+            }
         }
         return instance;
     }
@@ -57,18 +62,8 @@ public class EventService {
         }
     }
 
-    public void removeListener(Class<?> clazz, EventListener listener) {
-        synchronized (listeners) {
-            List<EventListener> eventListeners = listeners.get(clazz);
 
-            if (eventListeners != null) {
-                eventListeners.remove(listener);
-            }
-        }
-    }
-
-
-    public void getAllListener() {
+    public void initializeListenersFromAnnotatedMethods() {
         new Reflections(new ConfigurationBuilder().addUrls(ClasspathHelper.forPackage("fr.lespimpons.application"))
                 .addScanners(Scanners.MethodsAnnotated)).getMethodsAnnotatedWith(Listener.class).forEach(method -> {
 

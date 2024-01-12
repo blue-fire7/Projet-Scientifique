@@ -26,10 +26,9 @@ public class FrontController {
     }
 
 
-    @GetMapping("/fire-trucks")
+    @GetMapping(value = "/fire-trucks", produces = "application/json")
     public ResponseEntity<List<FireTruckDto>> getAllFireTrucks() {
-       // return ResponseEntity.ok(apiManagement.getAllFireTrucks()); TODO
-        return null;
+        return ResponseEntity.ok(apiManagement.getAllFireTrucks());
     }
 
     @GetMapping(value = "/fire-stations", produces = "application/json")

@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class WebsocketService {
@@ -18,10 +16,8 @@ public class WebsocketService {
         messagingTemplate.convertAndSend("/topic/update/sensor", sensorDto);
     }
 
-
-
-/*    public void updateFireTruck(FireTruckDto fireTruckDto) {
+    public void updateFireTruck(FireTruckDto fireTruckDto) {
         messagingTemplate.convertAndSend("/topic/update/fire", fireTruckDto);
-    }*/
+    }
 
 }
