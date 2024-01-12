@@ -2,7 +2,6 @@ package fr.lespimpons.simulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.lespimpons.application.logic.internal.entity.Team;
 import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.entity.Sensor;
 import fr.lespimpons.simulator.object.Fire;
@@ -13,15 +12,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api")
@@ -60,6 +56,7 @@ public class SensorController {
 
                 if (distance <= radius) {
                     long intensity = calculateIntensity(distance, radius);
+                    fire.getSensorList().add(sensor);
                     sensorOnFireList.add(new SensorOnFire(sensor.getId(), intensity));
                 }
             }
@@ -70,14 +67,23 @@ public class SensorController {
 
     @PostMapping("/send-data")
     public ResponseEntity<String> sendData(@RequestBody String json) {
-        // Logique de traitement des données (à adapter selon vos besoins)
+        //Affichage du Json à envoyer
         System.out.println("JSON data: " + json);
 
-        // Exemple de requête HTTP POST vers le localhost (ajustez l'URL en fonction de votre configuration)
-        String url = "http://postman-echo.com/post"; // Remplacez par l'URL de votre endpoint
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, json, String.class);
+        String url = "http://postman-echo.com/post";
+        //String url = "http://192.168.27.83:8000/api/data_capteur";
 
-        // Logique de traitement de la réponse (à adapter selon vos besoins)
+        // Créer un en-tête pour spécifier le type de contenu JSON
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Créer une entité HTTP avec le corps JSON et l'en-tête
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+
+        // Envoyer la requête POST
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class);
+
+        // Traitement de la réponse
         String responseBody = responseEntity.getBody();
         System.out.println("Response from server: " + responseBody);
 

@@ -20,4 +20,8 @@ public class FireSingleton {
     public void addFire(Fire fire) {
         fireList.add(fire);
     }
+
+    public void removeFire(Fire fire) {
+        fireList.remove(fire);
+    }
 }

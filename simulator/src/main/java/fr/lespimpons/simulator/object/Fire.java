@@ -1,7 +1,10 @@
 package fr.lespimpons.simulator.object;
 
+import fr.lespimpons.simulator.entity.Sensor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,5 +15,9 @@ public class Fire {
 
     private double longitude;
 
-    private double diameter;
+    private int diameter;
+
+    private int power;
+
+    private List<Sensor> sensorList;
 }

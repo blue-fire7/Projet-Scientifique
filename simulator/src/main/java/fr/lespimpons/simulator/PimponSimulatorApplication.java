@@ -1,5 +1,6 @@
 package fr.lespimpons.simulator;
 
+import fr.lespimpons.simulator.component.FireTruckSingleton;
 import fr.lespimpons.simulator.controller.SensorController;
 import fr.lespimpons.simulator.object.Fire;
 import fr.lespimpons.simulator.component.FireSingleton;
@@ -28,6 +29,11 @@ public class PimponSimulatorApplication implements CommandLineRunner {
 	@Bean
 	public FireSingleton fireSingleton() {
 		return FireSingleton.getInstance();
+	}
+
+	@Bean
+	public FireTruckSingleton fireTruckSingleton() {
+		return FireTruckSingleton.getInstance();
 	}
 
 	@Bean
