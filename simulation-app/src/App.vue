@@ -1,22 +1,18 @@
 <template>
-<div id="app">
-  <Map />
-</div>
-
+  <Navbar />
+  <div class="app-content">
+    <Map style="height: 100%; width: 100%" />
+  </div>
 </template>
 
 <script>
-import Sensor from './components/Sensor.vue'
-import Map from './components/Map.vue'
-import Fire from './components/Fire.vue'
-import SensorEvent from './components/SensorEvent.vue'
+import Map from './components/Map.vue';
+import Navbar from './components/Navbar.vue';
 
 export default {
   components: {
-    Sensor,
     Map,
-    Fire,
-    SensorEvent,
-}
-}
+    Navbar,
+  },
+};
 </script>

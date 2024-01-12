@@ -1,41 +1,98 @@
 <template>
   <div class="appContainer">
-    <div id="map" style="width: 640px; height: 640px"></div>
-
-    <div class="map-infos">
+    <div class="col-8">
+      <div id="map" style="width: 100%; height: 100%"></div>
+    </div>
+    <div class="map-infos col-4 bg-ground p-2">
       <div class="app-actions">
         <h2>Placer vos incendies</h2>
       </div>
 
-      <div class="coordinates" v-html="coordinatesDisplay"></div>
+      <!-- {{ fireDataList }} -->
+
+      <div class="coordinates flex flex-column p-1">
+        <span v-for="(geoJson, index) in listFires" :key="index">
+          <strong>Feu n°{{ index + 1 }} :</strong>
+          {{ geoJson.getLatLng().lat.toFixed(6) }},{{
+            geoJson.getLatLng().lng.toFixed(6)
+          }}
+        </span>
+      </div>
+      <!-- coordinatesDisplay.value = listFires.value .map( (geojson, index) =>
+      `<strong>Feu n°${index + 1} :</strong> ${geojson .getLatLng()
+      .lat.toFixed(6)}, ${geojson.getLatLng().lng.toFixed(6)}` ) .join('<br /><br />'); -->
       <div class="validation">
         <button class="reset" @click="reset">Réinitialiser</button>
         <button class="launch" @click="launch">Lancer !</button>
+        <!-- <button @click="socketService.sendFires()"></button> -->
+        <button @click="stopSimulation">Stop simulation</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed, watch } from 'vue';
 import SensorService from '../services/SensorService';
-import * as Stomp from 'stompjs';
-import L from "leaflet";
+import SocketService from '../services/SocketService';
+import L from 'leaflet';
+import useFireStore from '../store/fireStore';
+import { generateRID } from '../helpers/id';
 
 const listFires = ref([]);
 const map = ref(null);
-const coordinatesDisplay = ref("");
-const stompClient = ref(null);
+
+const fireStore = useFireStore();
+const socketService = new SocketService();
+
+const fireCircles = ref({});
+
+watch(
+  () => fireStore.fireList,
+  () => {
+    fireStore.fireList.forEach((fire) => {
+      if (fireCircles.value[fire.id]) {
+        fireCircles.value[fire.id].setRadius(fire.diameter);
+      } else {
+        let circle = L.circle([fire.latitude, fire.longitude], {
+          color: 'red',
+          fillColor: '#f03',
+          fillOpacity: 0.5,
+          radius: 10,
+        }).addTo(map.value);
+        fireCircles.value[fire.id] = circle;
+      }
+    });
+  },
+  { deep: true }
+);
+
+const fireDataList = computed({
+  get() {
+    return listFires.value.map((fire) => ({
+      latitude: fire.getLatLng().lat,
+      longitude: fire.getLatLng().lng,
+      diameter: fire.options.radius,
+      power: 0.5,
+    }));
+  },
+});
+
+const stopSimulation = () => {
+  socketService.sendStopSimulation();
+};
 
 onMounted(() => {
   // Initialiser la carte Leaflet
   map.value = L.map('map').setView([45.76667, 4.88333], 14);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map.value);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(
+    map.value
+  );
 
   // Charger les capteurs après l'initialisation de la carte
   loadSensors();
 
-  connectWebSocket();
+  // connectWebSocket();
 
   // Ajoutez un feu sur la carte
   map.value.on('click', addFireOnClick);
@@ -51,7 +108,9 @@ function loadSensors() {
 function createMarkers(sensors) {
   // Parcourir les capteurs et créer un marqueur pour chaque capteur
   sensors.forEach((sensor) => {
-    const marker = L.marker([sensor.latitude, sensor.longitude]).addTo(map.value);
+    const marker = L.marker([sensor.latitude, sensor.longitude]).addTo(
+      map.value
+    );
     marker.bindPopup(`<b>${sensor.latitude}</b><br>${sensor.longitude}`);
   });
 }
@@ -66,7 +125,7 @@ function addFireOnClick(event) {
     color: 'red',
     fillColor: '#f03',
     fillOpacity: 0.5,
-    radius: 500, // 1 kilomètre en mètres
+    radius: 10,
   }).addTo(map.value);
 
   // Ajoutez le nouveau GeoJSON à la liste
@@ -78,9 +137,6 @@ function addFireOnClick(event) {
 
 function updateCoordinatesDisplay() {
   // Mettez à jour la chaîne de coordonnées à afficher
-  coordinatesDisplay.value = listFires.value
-    .map((geojson, index) => `<strong>Feu n°${index + 1} :</strong> ${geojson.getLatLng().lat.toFixed(6)}, ${geojson.getLatLng().lng.toFixed(6)}`)
-    .join("<br><br>");
 }
 
 function reset() {
@@ -101,25 +157,13 @@ function launch() {
     latitude: fire.getLatLng().lat,
     longitude: fire.getLatLng().lng,
     diameter: fire.options.radius,
+    power: 0.5,
   }));
 
-  console.log(fireData);
-  
-  SensorService.sensorsOnFire(fireData); 
-}
+  console.log(fireDataList.value);
 
-function connectWebSocket() {
-  const socket = new WebSocket('ws://localhost:8080/ws'); // Remplacez l'URL par celle de votre serveur WebSocket
-
-  stompClient.value = Stomp.over(socket);
-
-  stompClient.value.connect({}, () => {
-    stompClient.value.subscribe('/topic/updateFireList', (message) => {
-      // Mettez à jour la liste des feux en fonction du message reçu
-      const updatedFires = JSON.parse(message.body);
-      updateFiresList(updatedFires);
-    });
-  });
+  // SensorService.sensorsOnFire(fireData);
+  socketService.sendFires(fireDataList.value);
 }
 
 function updateFiresList(updatedFires) {
