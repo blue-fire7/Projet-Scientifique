@@ -1,4 +1,5 @@
 import { useSensorStore } from '../store/sensorStore';
+import { useStationStore } from '../store/stationStore';
 
 export default class FireService {
   constructor() {}
@@ -21,4 +22,10 @@ export default class FireService {
       ];
     }
   }
+
+  async getFireStations() {
+    let result = await fetch(`http://localhost:8080/fire-stations`);
+    useStationStore().fireStations = await result.json();
+  }
+
 }
