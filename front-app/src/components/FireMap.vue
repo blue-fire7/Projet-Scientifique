@@ -9,6 +9,7 @@ import * as Leaflet from 'leaflet';
 import { storeToRefs } from 'pinia';
 import { useSensorStore } from '../store/sensorStore';
 import useAppOptionStore from '../store/optionStore';
+import { useStationStore } from '../store/stationStore';
 
 const map = ref();
 const mapContainer = ref();
@@ -24,6 +25,9 @@ const props = defineProps({
   trucks: {
     default: [],
   },
+  stations: {
+    default: []
+  }
 });
 
 watch(
@@ -44,6 +48,13 @@ watch(
     placeMarkers(props.fireSensors);
   }
 );
+
+watch(
+  () => useStationStore().fireStations,
+  () => {
+    placeStations(props.stations);
+  }
+)
 
 const iconSensor0 = Leaflet.icon({
   iconUrl: './src/assets/sensors/sensor0.png',
@@ -78,6 +89,13 @@ const truckIcon = Leaflet.icon({
   iconUrl: './src/assets/camion.png',
   iconSize: [64, 64], // Taille de l'icône [largeur, hauteur]
   iconAnchor: [32, 32], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
+  popupAnchor: [0, -32], // Point d'ancrage du popup par rapport à l'icône
+});
+
+const stationIcon = Leaflet.icon({
+  iconUrl: './src/assets/fire-station.png',
+  iconSize: [32, 32], // Taille de l'icône [largeur, hauteur]
+  iconAnchor: [16, 16], // Point d'ancrage de l'icône par rapport à son coin supérieur gauche
   popupAnchor: [0, -32], // Point d'ancrage du popup par rapport à l'icône
 });
 
@@ -138,6 +156,14 @@ const placeTrucks = (trucks) => {
   });
 };
 
+const placeStations = (stations) => {
+  stations.forEach((station) => {
+    new Leaflet.Marker([station.latitude, station.longitude], {
+      icon: stationIcon,
+    }).addTo(map.value);
+  });
+};
+
 onMounted(() => {
   map.value = Leaflet.map(mapContainer.value).setView([45.76667, 4.88333], 14);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -148,6 +174,7 @@ onMounted(() => {
 
   placeMarkers(props.fireSensors);
   placeTrucks(props.trucks);
+  placeStations(props.stations);
 
   // Ajoutez un gestionnaire d'événement de clic sur la carte
   // map.value.on('click', addMarkerOnClick);
