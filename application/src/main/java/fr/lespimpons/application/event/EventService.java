@@ -1,31 +1,25 @@
 package fr.lespimpons.application.event;
 
-import fr.lespimpons.application.logic.Listener;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class EventService {
     private static EventService instance;
-
     private final ExecutorService executorService;
     private final Map<Class<?>, List<EventListener>> listeners;
-    private final Map<Class<?>, List<RequestListener<?>>> requestListeners;
 
     private EventService() {
         this.executorService = Executors.newCachedThreadPool();
         this.listeners = new HashMap<>();
-        this.requestListeners = new HashMap<>();
 
         this.getAllListener();
     }
@@ -43,11 +37,6 @@ public class EventService {
         }
     }
 
-    public <T> void addRequestListener(Class<T> clazz, RequestListener<T> listener) {
-        synchronized (requestListeners) {
-            requestListeners.computeIfAbsent(clazz, k -> new ArrayList<>()).add(listener);
-        }
-    }
 
     public void publishEvent(Object event) {
         Class<?> clazz = event.getClass();
@@ -78,21 +67,6 @@ public class EventService {
         }
     }
 
-    public List<?> requestList(Class<?> clazz) {
-        synchronized (requestListeners) {
-            List<RequestListener<?>> eventListeners = requestListeners.get(clazz);
-
-            if (eventListeners != null) {
-                try {
-                    return (List<?>) executorService.submit(() -> eventListeners.get(0).onRequest()).get();
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            return List.of();
-        }
-    }
-
 
     public void getAllListener() {
         new Reflections(new ConfigurationBuilder().addUrls(ClasspathHelper.forPackage("fr.lespimpons.application"))
@@ -114,12 +88,8 @@ public class EventService {
                     throw new RuntimeException("Method getInstance must return the class");
                 }
                 addListener(parameterType, event -> {
-                    try {
-                        Object instance = method.getDeclaringClass().getMethod("getInstance").invoke(null);
-                        return method.invoke(instance, event);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Object instance = method.getDeclaringClass().getMethod("getInstance").invoke(null);
+                    return method.invoke(instance, event);
                 });
 
 

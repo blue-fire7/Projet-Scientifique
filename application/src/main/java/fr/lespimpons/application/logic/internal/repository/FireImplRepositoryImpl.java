@@ -20,9 +20,10 @@ public class FireImplRepositoryImpl extends Repository<FireImpl, Long> implement
 
         TypedQuery<FireImpl> q = entityManager.createQuery("""
                     SELECT se.fireImpl
-                    FROM SensorEvent se
+                    FROM SensorEventImpl se
                     WHERE se.sensorImpl.id = :sensorId
                     ORDER BY se.id.updateAt DESC
+                    LIMIT 1
                 """, FireImpl.class);
         q.setParameter("sensorId", SensorId);
         return q.getSingleResult();

@@ -1,0 +1,32 @@
+package fr.lespimpons.application.logic.internal.service;
+
+import fr.lespimpons.application.logic.internal.entity.StationImpl;
+import fr.lespimpons.application.logic.internal.repository.StationImplRepositoryImpl;
+
+import java.util.List;
+
+public class StationService {
+
+    private static StationService instance;
+    private final StationImplRepositoryImpl stationImplRepository = StationImplRepositoryImpl.getInstance();
+
+    private StationService() {
+    }
+
+    public static StationService getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        synchronized (StationService.class) {
+            if (instance == null) {
+                instance = new StationService();
+            }
+        }
+        return instance;
+    }
+
+    public List<StationImpl> getAllFireStations() {
+        return stationImplRepository.findAll();
+    }
+
+}

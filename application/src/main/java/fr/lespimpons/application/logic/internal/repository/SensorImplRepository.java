@@ -16,9 +16,9 @@ public interface SensorImplRepository {
                         se.level
                     )
                         FROM SensorImpl s
-                        LEFT JOIN SensorEvent se ON s = se.sensorImpl
+                        LEFT JOIN SensorEventImpl se ON s = se.sensorImpl
                         WHERE se.id.updateAt = (SELECT MAX(se2.id.updateAt)
-                        FROM SensorEvent se2
+                        FROM SensorEventImpl se2
                         WHERE se2.sensorImpl = s)
                         OR se.level IS NULL
                 """)*/
@@ -27,7 +27,7 @@ public interface SensorImplRepository {
 
     /*    @Query(value = """
                     SELECT se.sensorImpl
-                    FROM SensorEvent se
+                    FROM SensorEventImpl se
                     WHERE se.fireImpl.id = :fireId
                 """)*/
     List<SensorImpl> findAllSensorByFireId(Long fireId);
@@ -35,7 +35,7 @@ public interface SensorImplRepository {
 
     /*    @Query(value = """
                     SELECT se.level
-                    FROM SensorEvent se
+                    FROM SensorEventImpl se
                     WHERE se.sensorImpl.id = :sensorId
                     ORDER BY se.id.updateAt DESC
                     LIMIT 1

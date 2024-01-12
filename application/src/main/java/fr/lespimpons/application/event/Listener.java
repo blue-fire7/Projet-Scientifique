@@ -1,4 +1,4 @@
-package fr.lespimpons.application.logic;
+package fr.lespimpons.application.event;
 
 import java.lang.annotation.*;
 
@@ -11,7 +11,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  *
  * @Target(ElementType.METHOD) - This indicates that this annotation can be used on methods.
  * @Retention(RetentionPolicy.RUNTIME) - This indicates that the annotation should be available at runtime.
- * @Documented - This indicates that whenever the class is used, this annotation should be included in the JavaDoc.
  *
  * Example usage:
  *
