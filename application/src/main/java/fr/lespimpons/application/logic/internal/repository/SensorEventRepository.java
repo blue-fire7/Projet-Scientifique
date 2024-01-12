@@ -1,6 +1,6 @@
 package fr.lespimpons.application.logic.internal.repository;
 
-import fr.lespimpons.application.logic.internal.entity.SensorEvent;
+import fr.lespimpons.application.logic.internal.entity.SensorEventImpl;
 
 import java.util.List;
 
@@ -19,6 +19,6 @@ public interface SensorEventRepository {
                   and se.level > 0
                   and f.ended_at is null
                             """, nativeQuery = true)*/
-    List<SensorEvent> findAllInAreaWithLevelN(double longitude, double latitude, double radius);
+    List<SensorEventImpl> findAllInAreaWithLevel(double longitude, double latitude, double radius);
 
 }

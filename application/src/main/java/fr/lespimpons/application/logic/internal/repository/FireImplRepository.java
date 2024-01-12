@@ -9,7 +9,7 @@ public interface FireImplRepository {
 
     /*    @Query(value = """
         SELECT se.fireImpl
-        FROM SensorEvent se
+        FROM SensorEventImpl se
         WHERE se.sensorImpl.id = :sensorId
         ORDER BY se.id.updateAt DESC
     """)*/

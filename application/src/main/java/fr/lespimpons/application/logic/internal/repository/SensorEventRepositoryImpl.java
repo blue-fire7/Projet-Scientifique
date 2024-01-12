@@ -1,13 +1,12 @@
 package fr.lespimpons.application.logic.internal.repository;
 
-import fr.lespimpons.application.logic.internal.entity.FireTruck;
-import fr.lespimpons.application.logic.internal.entity.SensorEvent;
+import fr.lespimpons.application.logic.internal.entity.SensorEventImpl;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public class SensorEventRepositoryImpl extends Repository<SensorEvent, Long> implements SensorEventRepository{
+public class SensorEventRepositoryImpl extends Repository<SensorEventImpl, Long> implements SensorEventRepository {
 
     private static SensorEventRepositoryImpl instance;
 
@@ -30,7 +29,7 @@ public class SensorEventRepositoryImpl extends Repository<SensorEvent, Long> imp
 
 
     @Override
-    public List<SensorEvent> findAllInAreaWithLevelN(double longitude, double latitude, double radius) {
+    public List<SensorEventImpl> findAllInAreaWithLevel(double longitude, double latitude, double radius) {
         Query nativeQuery = entityManager.createNativeQuery("""
                 SELECT
                 se.*
@@ -43,10 +42,23 @@ public class SensorEventRepositoryImpl extends Repository<SensorEvent, Long> imp
                   and ST_DWithin(ST_MakePoint(s.longitude, s.latitude), ST_MakePoint(:longitude, :latitude), :radius )
                   and se.level > 0
                   and f.ended_at is null
-                        """, SensorEvent.class);
+                        """, SensorEventImpl.class);
         nativeQuery.setParameter("longitude", longitude);
         nativeQuery.setParameter("latitude", latitude);
         nativeQuery.setParameter("radius", radius);
         return nativeQuery.getResultList();
     }
+
+    public SensorEventImpl findLastSensorEventBySensorId(Long sensorId) {
+        TypedQuery<SensorEventImpl> nativeQuery = entityManager.createQuery("""
+                SELECT se
+                from SensorEventImpl se
+                where se.sensorImpl.id = :sensorId
+                order by se.id.updateAt desc
+                LIMIT 1
+                """, SensorEventImpl.class);
+        nativeQuery.setParameter("sensorId", sensorId);
+        return nativeQuery.getSingleResult();
+    }
+
 }

@@ -9,7 +9,7 @@ public class StationImplRepositoryImpl extends Repository<StationImpl, Long> imp
 
     private static StationImplRepositoryImpl instance;
 
-    public static StationImplRepository getInstance() {
+    public static StationImplRepositoryImpl getInstance() {
         if (instance == null) {
             instance = new StationImplRepositoryImpl();
         }

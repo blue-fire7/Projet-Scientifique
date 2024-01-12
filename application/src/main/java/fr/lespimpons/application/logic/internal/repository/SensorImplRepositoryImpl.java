@@ -1,5 +1,6 @@
 package fr.lespimpons.application.logic.internal.repository;
 
+
 import fr.lespimpons.application.logic.dto.SensorDto;
 import fr.lespimpons.application.logic.internal.entity.SensorImpl;
 import jakarta.persistence.TypedQuery;
@@ -21,9 +22,9 @@ public class SensorImplRepositoryImpl extends Repository<SensorImpl, Long> imple
                     se.level
                 )
                     FROM SensorImpl s
-                    LEFT JOIN SensorEvent se ON s = se.sensorImpl
+                    LEFT JOIN SensorEventImpl se ON s = se.sensorImpl
                     WHERE se.id.updateAt = (SELECT MAX(se2.id.updateAt)
-                    FROM SensorEvent se2
+                    FROM SensorEventImpl se2
                     WHERE se2.sensorImpl = s)
                     OR se.level IS NULL
                     """, SensorDto.class);
@@ -33,10 +34,11 @@ public class SensorImplRepositoryImpl extends Repository<SensorImpl, Long> imple
     @Override
     public List<SensorImpl> findAllSensorByFireId(Long fireId) {
         TypedQuery<SensorImpl> q = entityManager.createQuery("""
-                    SELECT se.sensorImpl
-                FROM SensorEvent se
+                SELECT se.sensorImpl
+                FROM SensorEventImpl se
                 WHERE se.fireImpl.id = :fireId
                     """, SensorImpl.class);
+        q.setParameter("fireId", fireId);
         return q.getResultList();
     }
 
@@ -44,11 +46,12 @@ public class SensorImplRepositoryImpl extends Repository<SensorImpl, Long> imple
     public Integer lastLevelBySensorId(Long sensorId) {
         return entityManager.createQuery("""
                                 SELECT se.level
-                                FROM SensorEvent se
+                                FROM SensorEventImpl se
                                 WHERE se.sensorImpl.id = :sensorId
                                 ORDER BY se.id.updateAt DESC
                                 LIMIT 1
-                """, Integer.class).setParameter("sensorId", sensorId).getSingleResult();
+                """, Integer.class).setParameter("sensorId", sensorId)
+                .getSingleResult();
     }
 
 

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "sensor_event")
 @NoArgsConstructor
 @AllArgsConstructor
-public class SensorEvent implements Event {
+public class SensorEventImpl implements Event {
     @EmbeddedId
     private SensorEventId id;
 

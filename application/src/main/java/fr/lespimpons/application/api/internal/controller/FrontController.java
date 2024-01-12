@@ -3,6 +3,7 @@ package fr.lespimpons.application.api.internal.controller;
 import fr.lespimpons.application.api.ApiManagement;
 import fr.lespimpons.application.logic.dto.FireTruckDto;
 import fr.lespimpons.application.logic.dto.SensorDto;
+import fr.lespimpons.application.logic.dto.StationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +21,19 @@ public class FrontController {
 
 
     @GetMapping(value = "/sensors", produces = "application/json")
-    public ResponseEntity<List<SensorDto>> getAllSensor() {
-        return ResponseEntity.ok(apiManagement.getAllSensor());
+    public ResponseEntity<List<SensorDto>> getAllSensors() {
+        return ResponseEntity.ok(apiManagement.getAllSensors());
     }
 
 
-    @GetMapping("/fire-trucks")
+    @GetMapping(value = "/fire-trucks", produces = "application/json")
     public ResponseEntity<List<FireTruckDto>> getAllFireTrucks() {
-       // return ResponseEntity.ok(apiManagement.getAllFireTrucks()); TODO
-        return null;
+        return ResponseEntity.ok(apiManagement.getAllFireTrucks());
     }
 
+    @GetMapping(value = "/fire-stations", produces = "application/json")
+    public ResponseEntity<List<StationDto>> getAllFireStations() {
+        return ResponseEntity.ok(apiManagement.getAllFireStations());
+    }
 
 }

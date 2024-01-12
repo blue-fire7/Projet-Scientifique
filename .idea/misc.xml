@@ -15,7 +15,7 @@
   </component>
   <component name="EntryPointsManager">
     <list size="1">
-      <item index="0" class="java.lang.String" itemvalue="fr.lespimpons.application.logic.Listener" />
+      <item index="0" class="java.lang.String" itemvalue="fr.lespimpons.application.event.Listener" />
     </list>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />

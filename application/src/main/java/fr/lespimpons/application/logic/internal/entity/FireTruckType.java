@@ -21,7 +21,7 @@ public class FireTruckType {
 
     @Size(max = 50)
     @NotNull
-    @Column(name = "type", nullable = false, length = 50)
+    @Column(name = "label", nullable = false, length = 50)
     private String type;
 
     @NotNull
@@ -30,5 +30,9 @@ public class FireTruckType {
 
     @OneToMany(mappedBy = "fireTruckType")
     private Set<FireTruck> fireTrucks = new LinkedHashSet<>();
+
+    @NotNull
+    @Column(name = "power_factor", nullable = false)
+    private Integer powerFactor;
 
 }

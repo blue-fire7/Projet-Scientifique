@@ -33,7 +33,7 @@ public class SensorImpl implements Sensor {
     private BigDecimal latitude;
 
     @OneToMany(mappedBy = "sensorImpl")
-    private Set<SensorEvent> sensorEvents = new LinkedHashSet<>();
+    private Set<SensorEventImpl> sensorEventImpls = new LinkedHashSet<>();
 
 
     @Override

@@ -1,13 +1,8 @@
 package fr.lespimpons.application.logic.internal.entity;
 
-import fr.lespimpons.application.pojo.geometry.Circle;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -37,7 +32,7 @@ public class FireImpl implements Fire {
     private Set<Intervention> interventions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "fireImpl")
-    private Set<SensorEvent> sensorEvents = new LinkedHashSet<>();
+    private Set<SensorEventImpl> sensorEventImpls = new LinkedHashSet<>();
 
 
     @Override

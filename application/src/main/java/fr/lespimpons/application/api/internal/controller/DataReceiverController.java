@@ -2,7 +2,7 @@ package fr.lespimpons.application.api.internal.controller;
 
 import fr.lespimpons.application.api.ApiManagement;
 import fr.lespimpons.application.api.internal.controller.dto.FireSensorDto;
-import fr.lespimpons.application.api.internal.controller.dto.TruckSensorDto;
+import fr.lespimpons.application.api.internal.controller.dto.TruckSensorDtoFromApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +22,8 @@ public class DataReceiverController {
     }
 
     @PostMapping("truck-location")
-    public void receiveTruckLocation(@RequestBody TruckSensorDto truckSensorDto) {
+    public void receiveTruckLocation(@RequestBody TruckSensorDtoFromApi truckSensorDtoFromApi) {
+        apiManagement.receiveTruckLocationEvent(truckSensorDtoFromApi);
 
     }
 
