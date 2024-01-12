@@ -22,22 +22,22 @@ public class FireTruck {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fire_station_id", nullable = false)
     private Station fireStation;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fire_truck_type_id", nullable = false)
     private FireTruckType fireTruckType;
 
     @NotNull
     @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
-    private BigDecimal longitude;
+    private double longitude;
 
     @NotNull
     @Column(name = "latitude", nullable = false, precision = 9, scale = 6)
-    private BigDecimal latitude;
+    private double latitude;
 
     @OneToMany(mappedBy = "fireTruck")
     private Set<Intervention> interventions = new LinkedHashSet<>();

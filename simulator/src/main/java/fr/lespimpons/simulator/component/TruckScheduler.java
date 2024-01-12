@@ -2,7 +2,6 @@ package fr.lespimpons.simulator.component;
 
 
 import fr.lespimpons.simulator.entity.FireTruck;
-import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.repository.FireTruckRepository;
 import fr.lespimpons.simulator.repository.InterventionRepository;
 import fr.lespimpons.simulator.services.WebSocketService;
@@ -20,8 +19,8 @@ public class TruckScheduler {
     private List<FireTruck> truckList;
     private FireTruckRepository fireTruckRepository;
     private InterventionRepository interventionRepository;
-    private TruckSingleton truckSingleton;
-    public TruckScheduler(WebSocketService webSocketService, FireTruckRepository fireTruckRepository, InterventionRepository interventionRepository, TruckSingleton truckSingleton){
+    private FireTruckSingleton truckSingleton;
+    public TruckScheduler(WebSocketService webSocketService, FireTruckRepository fireTruckRepository, InterventionRepository interventionRepository, FireTruckSingleton truckSingleton){
         this.truckList = new ArrayList<>();
         this.webSocketService = webSocketService;
         this.fireTruckRepository = fireTruckRepository;
@@ -31,11 +30,10 @@ public class TruckScheduler {
 
     @Scheduled(fixedDelay = 5000)
     public void doTick(){
-        List<FireTruck> trucksInIntervention = fireTruckRepository.findTruckInIntervention();
+        List<FireTruck> trucksInIntervention = fireTruckRepository.findFireTruckInIntervention();
         log.info(trucksInIntervention.toString());
-        this.truckSingleton.truckList = trucksInIntervention;
-
-
+        this.truckSingleton.getFireTruckList().clear();
+        this.truckSingleton.getFireTruckList().addAll(trucksInIntervention);
     }
 
 

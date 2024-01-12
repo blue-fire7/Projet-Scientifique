@@ -18,5 +18,5 @@ public interface FireTruckRepository extends JpaRepository<FireTruck, Long> {
                     "join Fire f on f.id = i.fire.id " +
                     "where f.endedAt is null"
     )
-    public List<FireTruck> findTruckInIntervention();
+    public List<FireTruck> findFireTruckInIntervention();
 }

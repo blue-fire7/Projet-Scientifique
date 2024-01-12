@@ -2,9 +2,12 @@ package fr.lespimpons.simulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.lespimpons.simulator.component.FireTruckSingleton;
+import fr.lespimpons.simulator.entity.FireTruck;
 import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.entity.Sensor;
 import fr.lespimpons.simulator.object.Fire;
+import fr.lespimpons.simulator.services.FireTruckService;
 import fr.lespimpons.simulator.services.SensorService;
 import fr.lespimpons.simulator.component.FireSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +29,8 @@ import java.util.List;
 public class SensorController {
     @Autowired
     private SensorService service;
+
+    private FireTruckService fireTruckService;
 
     private final RestTemplate restTemplate;
 
@@ -56,7 +62,6 @@ public class SensorController {
 
                 if (distance <= radius) {
                     long intensity = calculateIntensity(distance, radius);
-                    fire.getSensorList().add(sensor);
                     sensorOnFireList.add(new SensorOnFire(sensor.getId(), intensity));
                 }
             }
@@ -85,24 +90,33 @@ public class SensorController {
 
         // Traitement de la réponse
         String responseBody = responseEntity.getBody();
-//        System.out.println("Response from server: " + responseBody);
+        //System.out.println("Response from server: " + responseBody);
 
         return responseEntity;
     }
 
     @Transactional
     public void checkFires(List<Fire> listFire){
+        //Liste des camions en intervention
+        List<FireTruck> fireTruckList = FireTruckSingleton.getInstance().getFireTruckList();
+        for (FireTruck fireTruck : fireTruckList){
+            System.out.println("FireTruck "+fireTruck.getId());
+        }
 
         for (Fire fire : listFire){
-            List<Intervention> interventionList = service.findInterventionByFireId(fire.getId());
-
-            if (interventionList != null){
-                for (Intervention intervention : interventionList){
-                    int puissance = intervention.getFireTruck().getFireTruckType().getPowerFactor() * 10;
-                    fire.setDiameter(fire.getDiameter() - puissance);
+            for (FireTruck fireTruck : fireTruckList){
+                if (isFireTruckInFire(fire, fireTruck)){
+                    System.out.println("Camion !");
+                    fire.setDiameter(fire.getDiameter() - fireTruck.getFireTruckType().getPowerFactor()*30);
+                    System.out.println("Fire "+fire.getId()+" diameter : "+fire.getDiameter());
                 }
             }
         }
+    }
+
+    public boolean isFireTruckInFire(Fire fire, FireTruck fireTruck){
+        double distance = calculateDistance(fireTruck.getLatitude(), fireTruck.getLongitude(), fire.getLatitude(), fire.getLongitude());
+        return distance <= (75 + (double) fire.getDiameter());
     }
 
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
