@@ -13,7 +13,6 @@ import fr.lespimpons.application.logic.internal.repository.SensorImplRepositoryI
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -105,8 +104,13 @@ public class FireService {
 
         } else {
             log.info("Fire in the area");
-            SensorEventImpl fireEvent = createFireAndSave(sensor, sensorDto.intensity());
-
+            //on recupère le dernier évènement de feu
+            FireImpl fire = fireImplRepository.findLastFireBySensorId(sensor.getId());
+            SensorEventImpl sensorEventImpl = SensorEventImpl.builder()
+                    .id(SensorEventId.builder().fireId(fire.getId()).sensorId(sensor.getId())
+                            .updateAt(LocalDateTime.now()).build()).level(sensorDto.intensity()).sensorImpl(sensor)
+                    .fireImpl(fire).build();
+            sensorEventRepository.saveAndFlush(sensorEventImpl);
 
             //TODO: voir si on update le feu ou si on en crée un nouveau
         }
@@ -159,14 +163,20 @@ public class FireService {
                         .build()).level(intensity).sensorImpl(sensor).fireImpl(fire).build();
 
         return sensorEventRepository.saveAndFlush(sensorEventImpl);
-
     }
 
 
     public FireTruck updateTruckLocation(TruckSensorDtoFromApi truckSensorDtoFromApi) {
         FireTruck fireTruck = fireTruckRepository.findById(truckSensorDtoFromApi.id());
-        fireTruck.setLatitude(BigDecimal.valueOf(truckSensorDtoFromApi.latitude()));
-        fireTruck.setLongitude(BigDecimal.valueOf(truckSensorDtoFromApi.longitude()));
+
+        if (fireTruck == null) {
+            throw new RuntimeException("Fire truck not found");
+        }
+
+        fireTruck.setLatitude(truckSensorDtoFromApi.latitude());
+        fireTruck.setLongitude(truckSensorDtoFromApi.longitude());
+
+
         fireTruck = fireTruckRepository.saveAndFlush(fireTruck);
 
         FireTruckDto fireTruckDto = new FireTruckDto(fireTruck.getId(), fireTruck.getLongitude()

@@ -3,7 +3,6 @@ package fr.lespimpons.application.logic.internal.entity;
 import fr.lespimpons.application.pojo.geometry.Point;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,16 +32,14 @@ public class FireTruck implements Vehicle {
     @JoinColumn(name = "fire_truck_type_id", nullable = false)
     private FireTruckType fireTruckType;
 
-    @NotNull
-    @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
-    private BigDecimal longitude;
-
-    @NotNull
-    @Column(name = "latitude", nullable = false, precision = 9, scale = 6)
-    private BigDecimal latitude;
-
     @OneToMany(mappedBy = "fireTruck")
     private Set<Intervention> interventions = new LinkedHashSet<>();
+
+    @Column(name = "longitude", precision = 3, scale = 20)
+    private BigDecimal longitude;
+
+    @Column(name = "latitude", precision = 3, scale = 20)
+    private BigDecimal latitude;
 
     public void move(Point destination) {
         this.latitude = getLatitude();
