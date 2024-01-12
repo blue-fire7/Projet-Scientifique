@@ -82,6 +82,8 @@ const stopSimulation = () => {
   socketService.sendStopSimulation();
 };
 
+var compteur = 1;
+
 onMounted(() => {
   // Initialiser la carte Leaflet
   map.value = L.map('map').setView([45.76667, 4.88333], 14);
@@ -115,6 +117,10 @@ function createMarkers(sensors) {
   });
 }
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function addFireOnClick(event) {
   // Récupérez les coordonnées du feu
   const clickedLat = event.latlng.lat;
@@ -125,7 +131,8 @@ function addFireOnClick(event) {
     color: 'red',
     fillColor: '#f03',
     fillOpacity: 0.5,
-    radius: 10,
+    power: getRandomInt(1, 9),
+    radius: 200, // 1 kilomètre en mètres
   }).addTo(map.value);
 
   // Ajoutez le nouveau GeoJSON à la liste
@@ -154,10 +161,12 @@ function reset() {
 
 function launch() {
   const fireData = listFires.value.map((fire) => ({
+    id: compteur++,
     latitude: fire.getLatLng().lat,
     longitude: fire.getLatLng().lng,
     diameter: fire.options.radius,
-    power: 0.5,
+    power: fire.options.power,
+    sensorList: [],
   }));
 
   console.log(fireDataList.value);
