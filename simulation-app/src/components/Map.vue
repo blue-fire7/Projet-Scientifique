@@ -72,7 +72,7 @@ function addFireOnClick(event) {
     fillColor: '#f03',
     fillOpacity: 0.5,
     power: getRandomInt(1,9),
-    radius: 100, // 1 kilomètre en mètres
+    radius: 200, // 1 kilomètre en mètres
   }).addTo(map.value);
 
   // Ajoutez le nouveau GeoJSON à la liste
@@ -109,6 +109,7 @@ function launch() {
     longitude: fire.getLatLng().lng,
     diameter: fire.options.radius,
     power: fire.options.power,
+    sensorList: [],
   }));
 
   console.log(fireData);
