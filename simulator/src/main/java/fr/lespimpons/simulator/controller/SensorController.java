@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin(origins="*")
 public class SensorController {
     @Autowired
     private SensorService service;
@@ -68,7 +68,7 @@ public class SensorController {
     @PostMapping("/send-data")
     public ResponseEntity<String> sendData(@RequestBody String json) {
         //Affichage du Json à envoyer
-        System.out.println("JSON data: " + json);
+//        System.out.println("JSON data: " + json);
 
         String url = "http://postman-echo.com/post";
         //String url = "http://192.168.27.83:8000/api/data_capteur";
@@ -85,7 +85,7 @@ public class SensorController {
 
         // Traitement de la réponse
         String responseBody = responseEntity.getBody();
-        System.out.println("Response from server: " + responseBody);
+//        System.out.println("Response from server: " + responseBody);
 
         return responseEntity;
     }

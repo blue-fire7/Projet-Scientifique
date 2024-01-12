@@ -1,5 +1,7 @@
 package fr.lespimpons.simulator.component;
 
+import fr.lespimpons.application.api.internal.service.WebsocketService;
+import fr.lespimpons.application.logic.internal.repository.FireTruckRepository;
 import fr.lespimpons.simulator.controller.SensorController;
 import fr.lespimpons.simulator.entity.FireTruck;
 import fr.lespimpons.simulator.object.Fire;
@@ -24,7 +26,7 @@ public class Scheduler {
         this.webSocketService = webSocketService;
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 1000)
     public void scheduler() throws InterruptedException {
         System.out.println("wait");
         //Récupération de la liste des feux
@@ -53,6 +55,7 @@ public class Scheduler {
                 firesToRemove.add(fire);
             }
         }
+
 
         for (Fire fire : fireList){
             System.out.println("Fire : id : " +fire.getId() + " Diamètre : "+fire.getDiameter());
