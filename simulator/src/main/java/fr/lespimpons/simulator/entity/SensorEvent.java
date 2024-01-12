@@ -20,12 +20,12 @@ public class SensorEvent implements Event {
     private SensorEventId id;
 
     @MapsId("sensorId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sensor_id")
     private Sensor sensor;
 
     @MapsId("fireId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fire_id")
     private Fire fire;
 

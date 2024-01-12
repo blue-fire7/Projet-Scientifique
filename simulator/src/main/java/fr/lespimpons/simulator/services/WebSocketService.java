@@ -2,10 +2,12 @@ package fr.lespimpons.simulator.services;
 
 import fr.lespimpons.simulator.entity.FireTruck;
 import fr.lespimpons.simulator.object.Fire;
+import fr.lespimpons.simulator.object.dto.FireTruckDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,7 +20,11 @@ public class WebSocketService {
     }
 
     public void sendTruckList(List<FireTruck> truckList) {
-        messagingTemplate.convertAndSend("/topic/update/trucks", truckList);
+        List<FireTruckDto> truckListDTO = new ArrayList<FireTruckDto>();
+
+        truckList.forEach(firetruck -> truckListDTO.add(new FireTruckDto(firetruck)));
+
+        messagingTemplate.convertAndSend("/topic/update/trucks", truckListDTO);
     }
 
 }

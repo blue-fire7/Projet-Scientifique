@@ -23,7 +23,7 @@ public class FireTruckType {
 
     @Size(max = 50)
     @NotNull
-    @Column(name = "type", nullable = false, length = 50)
+    @Column(name = "label", nullable = false, length = 50)
     private String type;
 
     @NotNull

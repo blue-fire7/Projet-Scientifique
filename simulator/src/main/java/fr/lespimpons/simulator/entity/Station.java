@@ -25,11 +25,11 @@ public class Station implements Structure {
 
     @NotNull
     @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
-    private BigDecimal longitude;
+    private Double longitude;
 
     @NotNull
     @Column(name = "latitude", nullable = false, precision = 9, scale = 6)
-    private BigDecimal latitude;
+    private Double latitude;
 
     @OneToMany(mappedBy = "fireStation")
     private Set<FireTruck> fireTrucks = new LinkedHashSet<>();

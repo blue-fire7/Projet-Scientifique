@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -33,11 +32,11 @@ public class FireTruck {
 
     @NotNull
     @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
-    private double longitude;
+    private Double longitude;
 
     @NotNull
     @Column(name = "latitude", nullable = false, precision = 9, scale = 6)
-    private double latitude;
+    private Double latitude;
 
     @OneToMany(mappedBy = "fireTruck")
     private Set<Intervention> interventions = new LinkedHashSet<>();

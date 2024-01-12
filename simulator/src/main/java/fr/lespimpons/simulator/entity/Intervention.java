@@ -15,17 +15,17 @@ public class Intervention {
     private InterventionId id;
 
     @MapsId("fireTruckId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fire_truck_id")
     private FireTruck fireTruck;
 
     @MapsId("fireId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fire_id")
     private Fire fire;
 
     @MapsId("teamId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team_id")
     private Team team;
 }
