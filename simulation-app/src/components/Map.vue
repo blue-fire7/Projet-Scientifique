@@ -26,6 +26,7 @@ const listFires = ref([]);
 const map = ref(null);
 const coordinatesDisplay = ref("");
 const stompClient = ref(null);
+var compteur = 1;
 
 onMounted(() => {
   // Initialiser la carte Leaflet
@@ -56,6 +57,10 @@ function createMarkers(sensors) {
   });
 }
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function addFireOnClick(event) {
   // Récupérez les coordonnées du feu
   const clickedLat = event.latlng.lat;
@@ -66,7 +71,8 @@ function addFireOnClick(event) {
     color: 'red',
     fillColor: '#f03',
     fillOpacity: 0.5,
-    radius: 500, // 1 kilomètre en mètres
+    power: getRandomInt(1,9),
+    radius: 100, // 1 kilomètre en mètres
   }).addTo(map.value);
 
   // Ajoutez le nouveau GeoJSON à la liste
@@ -98,9 +104,11 @@ function reset() {
 
 function launch() {
   const fireData = listFires.value.map((fire) => ({
+    id: compteur++,
     latitude: fire.getLatLng().lat,
     longitude: fire.getLatLng().lng,
     diameter: fire.options.radius,
+    power: fire.options.power,
   }));
 
   console.log(fireData);
