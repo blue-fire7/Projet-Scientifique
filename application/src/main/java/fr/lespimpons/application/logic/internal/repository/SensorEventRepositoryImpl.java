@@ -1,6 +1,7 @@
 package fr.lespimpons.application.logic.internal.repository;
 
 import fr.lespimpons.application.logic.internal.entity.SensorEventImpl;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
@@ -58,7 +59,11 @@ public class SensorEventRepositoryImpl extends Repository<SensorEventImpl, Long>
                 LIMIT 1
                 """, SensorEventImpl.class);
         nativeQuery.setParameter("sensorId", sensorId);
-        return nativeQuery.getSingleResult();
+        try {
+            return nativeQuery.getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
     }
 
 }

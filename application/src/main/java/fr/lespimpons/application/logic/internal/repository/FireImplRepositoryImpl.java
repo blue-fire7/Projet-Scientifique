@@ -1,6 +1,7 @@
 package fr.lespimpons.application.logic.internal.repository;
 
 import fr.lespimpons.application.logic.internal.entity.FireImpl;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 public class FireImplRepositoryImpl extends Repository<FireImpl, Long> implements FireImplRepository {
@@ -17,7 +18,6 @@ public class FireImplRepositoryImpl extends Repository<FireImpl, Long> implement
 
     public FireImpl findLastFireBySensorId(Long SensorId) {
 
-
         TypedQuery<FireImpl> q = entityManager.createQuery("""
                     SELECT se.fireImpl
                     FROM SensorEventImpl se
@@ -26,7 +26,11 @@ public class FireImplRepositoryImpl extends Repository<FireImpl, Long> implement
                     LIMIT 1
                 """, FireImpl.class);
         q.setParameter("sensorId", SensorId);
-        return q.getSingleResult();
+        try {
+            return q.getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
     }
 
 }

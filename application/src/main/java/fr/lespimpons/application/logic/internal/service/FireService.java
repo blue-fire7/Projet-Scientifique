@@ -58,34 +58,19 @@ public class FireService {
         // si oui on update le feu
         // si non on crée un feu
 
-        SensorImpl sensor = sensorImplRepository.findById(sensorDto.id());
-
+        SensorImpl sensor = sensorImplRepository.findById(sensorDto.id()); // sensor updater
         if (sensor == null) {
             log.info("Sensor not found");
             throw new RuntimeException("Sensor not found");
         }
 
-        this.eventService.publishEvent(SensorMapper.toDto(sensor, sensorDto.intensity()));
+        this.eventService.publishEvent(SensorMapper.toDto(sensor, sensorDto.intensity())); // on publish pour le ws
 
 
         //SI 0 ALORS ON REGARDE SI LE FEU EST FINI
         if (sensorDto.intensity() == 0) {
-            checkIfFire(sensor);
-
-            SensorEventImpl lastSensorEventBySensorId = sensorEventRepository.findLastSensorEventBySensorId(sensor.getId());
-
-            if (lastSensorEventBySensorId != null && lastSensorEventBySensorId.getLevel() != 0) {
-                log.info("Fire intensity updated to 0");
-
-                SensorEventImpl sensorEventImpl = SensorEventImpl.builder()
-                        .id(SensorEventId.builder().fireId(lastSensorEventBySensorId.getFireImpl().getId())
-                                .sensorId(sensor.getId()).updateAt(LocalDateTime.now()).build())
-                        .level(sensorDto.intensity()).sensorImpl(sensor)
-                        .fireImpl(lastSensorEventBySensorId.getFireImpl()).build();
-
-                sensorEventRepository.saveAndFlush(sensorEventImpl);
-            }
-
+            checkIfFireAndTryToFinishHim(sensor);
+            saveZeroSensorEvent(sensor);
             return;
         }
 
@@ -94,18 +79,19 @@ public class FireService {
                 .doubleValue(), sensor.getLatitude().doubleValue(), RADIUS);
 
 
+
         if (allSensor.isEmpty()) {
             log.info("No fire in the area");
             SensorEventImpl fireEvent = createFireAndSave(sensor, sensorDto.intensity());
-
             log.info("Fire created {}", fireEvent);
-            log.info("Emergency service called");
             emergencyService.sendEmergency(sensor.getPosition(), fireEvent.getFireImpl());
-
+            log.info("Emergency sent");
         } else {
             log.info("Fire in the area");
-            //on recupère le dernier évènement de feu
-            FireImpl fire = fireImplRepository.findLastFireBySensorId(sensor.getId());
+
+            //on recupère le feu du premier sensor, tri de l'ordre des capteurs dans le repository
+            FireImpl fire = allSensor.get(0).getFireImpl();
+
             SensorEventImpl sensorEventImpl = SensorEventImpl.builder()
                     .id(SensorEventId.builder().fireId(fire.getId()).sensorId(sensor.getId())
                             .updateAt(LocalDateTime.now()).build()).level(sensorDto.intensity()).sensorImpl(sensor)
@@ -118,15 +104,34 @@ public class FireService {
 
     }
 
-    private void checkIfFire(SensorImpl sensor) {
+    private void saveZeroSensorEvent(SensorImpl sensor) {
+        SensorEventImpl lastSensorEventBySensorId = sensorEventRepository.findLastSensorEventBySensorId(sensor.getId());
+
+        if (lastSensorEventBySensorId != null && lastSensorEventBySensorId.getLevel() != 0) {
+            log.info("Fire intensity updated to 0");
+
+            SensorEventImpl sensorEventImpl = SensorEventImpl.builder()
+                    .id(SensorEventId.builder().fireId(lastSensorEventBySensorId.getFireImpl().getId())
+                            .sensorId(sensor.getId()).updateAt(LocalDateTime.now()).build()).level(0).sensorImpl(sensor)
+                    .fireImpl(lastSensorEventBySensorId.getFireImpl()).build();
+
+            sensorEventRepository.saveAndFlush(sensorEventImpl);
+        }
+    }
+
+    /**
+     * Check si le dernier feu lié au sensor est terminé
+     * Si oui on update la date de fin
+     *
+     * @param sensor
+     */
+    private boolean checkIfFireAndTryToFinishHim(SensorImpl sensor) {
         //on recupère le dernier évènement de feu
         FireImpl fire = fireImplRepository.findLastFireBySensorId(sensor.getId());
         if (fire == null || fire.getEndedAt() != null) {
             log.info("No more fire in the area");
-            return;
+            return false;
         } else {
-            log.info("Fire in the area");
-
             //check si encore un capteur du feu est actif
             List<SensorImpl> allSensor = sensorImplRepository.findAllSensorByFireId(fire.getId());
             //on remove le sensor actuel
@@ -137,18 +142,15 @@ public class FireService {
 
             if (feuxEnCours) {
                 log.info("Fire still in the area");
-                return;
+                return true;
             } else {
                 log.info("Fire ended");
                 fire.setEndedAt(LocalDateTime.now());
                 fireImplRepository.saveAndFlush(fire);
+                return false;
             }
 
         }
-        //on met à jour la date de fin du feu
-        fire.setEndedAt(LocalDateTime.now());
-        //on sauvegarde
-        fireImplRepository.saveAndFlush(fire);
     }
 
     @Transactional

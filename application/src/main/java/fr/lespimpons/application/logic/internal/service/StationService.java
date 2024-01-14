@@ -1,14 +1,14 @@
 package fr.lespimpons.application.logic.internal.service;
 
 import fr.lespimpons.application.logic.internal.entity.StationImpl;
-import fr.lespimpons.application.logic.internal.repository.StationImplRepositoryImpl;
+import fr.lespimpons.application.logic.internal.repository.StationImplRepository;
 
 import java.util.List;
 
 public class StationService {
 
     private static StationService instance;
-    private final StationImplRepositoryImpl stationImplRepository = StationImplRepositoryImpl.getInstance();
+    private final StationImplRepository stationImplRepository = StationImplRepository.getInstance();
 
     private StationService() {
     }

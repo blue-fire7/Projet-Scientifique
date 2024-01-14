@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
@@ -18,15 +19,15 @@ import java.util.Queue;
 public class EmergencyService {
     private static EmergencyService instance;
     private final InterventionRepositoryImpl interventionRepository;
-    private final StationImplRepository stationImplRepository;
+    private final StationRepository stationRepository;
     private final FireImplRepository fireImplRepository;
     private final FireTruckRepository fireTruckRepository;
     private final TeamRepository teamRepository;
-    private final Queue<FireImpl> fireQueue = new ArrayDeque<>();
+    private final Queue<FireImpl> fireQueue = new LinkedList<>();
 
     private EmergencyService() {
         this.interventionRepository = InterventionRepositoryImpl.getInstance();
-        this.stationImplRepository = StationImplRepositoryImpl.getInstance();
+        this.stationRepository = StationImplRepository.getInstance();
         this.fireImplRepository = FireImplRepositoryImpl.getInstance();
         this.fireTruckRepository = FireTruckRepositoryImpl.getInstance();
         this.teamRepository = TeamRepositoryImpl.getInstance();
@@ -50,7 +51,7 @@ public class EmergencyService {
 
         // on trouve la caserne la plus proche avec un camion et une équipe dispo
 
-        List<StationImpl> stations = stationImplRepository.findWithDispo();
+        List<StationImpl> stations = stationRepository.findWithDispo();
 
         stations.sort((s1, s2) -> {
             double distance1 = GeometryUtils.calculateDistance(position, s1.getPosition());
@@ -71,15 +72,12 @@ public class EmergencyService {
         Intervention intervention = Intervention
                 .builder()
                 .id(InterventionId.builder()
-                        /*                   .fireId(fire.getId())
-                                           .fireTruckId(fireTrucks.get(0).getId())
-                                           .teamId(teams.get(0).getId())*/
                         .build())
                 .team(teams.get(0))
                 .fire(fire)
                 .fireTruck(fireTrucks.get(0))
                 .build();
-
+        log.info("Intervention created : {}", intervention);
         interventionRepository.saveAndFlush(intervention);
     }
 
