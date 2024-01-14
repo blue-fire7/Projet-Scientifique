@@ -3,7 +3,6 @@ package fr.lespimpons.application.logic.internal.entity;
 import fr.lespimpons.application.pojo.geometry.Point;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +14,7 @@ import java.util.Set;
 @Table(name = "fire_station")
 @Getter
 @Setter
-public class StationImpl implements Station{
+public class StationImpl implements Station {
 
 
     @Id
@@ -44,6 +43,6 @@ public class StationImpl implements Station{
 
     @Transient
     public Point getPosition() {
-    return new Point(this.longitude.doubleValue(), this.latitude.doubleValue());
+        return new Point(this.longitude.doubleValue(), this.latitude.doubleValue());
     }
 }

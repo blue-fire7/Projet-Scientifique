@@ -72,4 +72,8 @@ public class ApiManagement {
     public List<FireTruckDto> getAllFireTrucks() {
         return logicManagement.getAllFireTrucks();
     }
+
+    public StationDto getFireStation(Long id) {
+        return logicManagement.getFireStation(id);
+    }
 }

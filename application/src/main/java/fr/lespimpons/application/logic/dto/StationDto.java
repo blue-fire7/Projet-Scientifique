@@ -1,9 +1,20 @@
 package fr.lespimpons.application.logic.dto;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
-public record StationDto(Long id, double longitude, double latitude) {
+@Data
+public class StationDto {
+    private Long id;
+    private double longitude;
+    private double latitude;
+    private Integer nbFireTruck;
+    private Integer AvailableFireTruck;
+
     public StationDto(Long id, BigDecimal longitude, BigDecimal latitude) {
-        this(id, longitude.doubleValue(), latitude.doubleValue());
+        this.id = id;
+        this.longitude = longitude.doubleValue();
+        this.latitude = latitude.doubleValue();
     }
 }

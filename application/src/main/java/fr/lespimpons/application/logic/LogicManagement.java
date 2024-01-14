@@ -78,4 +78,12 @@ public class LogicManagement {
         return fireTruckService.getAllFireTruckDto();
     }
 
+    public StationDto getFireStation(Long id) {
+        StationDto dto = StationMapper.toDto(stationService.getFireStation(id));
+        Integer firetruckOfStationWithoutIntervention = fireTruckService.getAvailableFireTruck(id);
+        Integer firetruckOfStation = fireTruckService.getFiretruckOfStation(id);
+        dto.setAvailableFireTruck(firetruckOfStationWithoutIntervention);
+        dto.setNbFireTruck(firetruckOfStation);
+        return dto;
+    }
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -34,6 +35,11 @@ public class FrontController {
     @GetMapping(value = "/fire-stations", produces = "application/json")
     public ResponseEntity<List<StationDto>> getAllFireStations() {
         return ResponseEntity.ok(apiManagement.getAllFireStations());
+    }
+
+    @GetMapping(value = "/fire-station/{id}", produces = "application/json")
+    public ResponseEntity<StationDto> getAllFireStations(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(apiManagement.getFireStation(id));
     }
 
 }

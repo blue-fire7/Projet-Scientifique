@@ -49,4 +49,11 @@ public class FireTruckService {
         return new FireTruckDto(fireTruck.getId(), longitude.doubleValue(), latitude.doubleValue(), fireTruck.getFireTruckType()
                 .getType());
     }
+
+    public Integer getAvailableFireTruck(Long id) {
+    return fireTruckRepository.getAvailableFireTruck(id);
+    }
+    public Integer getFiretruckOfStation(Long id) {
+        return fireTruckRepository.getFiretruckOfStation(id);
+    }
 }

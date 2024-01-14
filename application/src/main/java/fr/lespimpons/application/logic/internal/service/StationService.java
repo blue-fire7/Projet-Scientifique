@@ -29,4 +29,7 @@ public class StationService {
         return stationImplRepository.findAll();
     }
 
+    public StationImpl getFireStation(Long id) {
+        return stationImplRepository.findById(id);
+    }
 }

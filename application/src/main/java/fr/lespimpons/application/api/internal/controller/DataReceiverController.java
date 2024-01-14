@@ -24,7 +24,6 @@ public class DataReceiverController {
     @PostMapping("truck-location")
     public void receiveTruckLocation(@RequestBody TruckSensorDtoFromApi truckSensorDtoFromApi) {
         apiManagement.receiveTruckLocationEvent(truckSensorDtoFromApi);
-
     }
 
 }
