@@ -42,7 +42,7 @@ public class TruckScheduler {
         this.sensorEventRepository = sensorEventRepository;
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 10000)
     public void doTick() {
         List<Intervention> activeInterventions = interventionRepository.findActiveInterventions();
         this.interventionSingleton.getInterventionList().addAll(activeInterventions.stream().filter(intervention -> this.interventionSingleton.getInterventionList().stream().noneMatch(intervention1 -> Objects.equals(intervention.getId(), intervention1.getId()))).toList());

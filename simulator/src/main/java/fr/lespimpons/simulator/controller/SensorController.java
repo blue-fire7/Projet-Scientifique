@@ -67,7 +67,9 @@ public class SensorController {
                 }
             }
         }
-
+        for (SensorOnFire sensor : sensorOnFireList){
+            System.out.println("Sensor : "+sensor.id+", "+sensor.intensity);
+        }
         sendData(convertObjectToJson(sensorOnFireList));
     }
 
@@ -117,7 +119,7 @@ public class SensorController {
 
     public boolean isFireTruckInFire(Fire fire, FireTruck fireTruck){
         double distance = calculateDistance(fireTruck.getLatitude(), fireTruck.getLongitude(), fire.getLatitude(), fire.getLongitude());
-        return distance <= (75 + (double) fire.getDiameter());
+        return distance <= (75 + (double) fire.getDiameter() / 2.0);
     }
 
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
