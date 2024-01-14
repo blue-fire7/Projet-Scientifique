@@ -64,7 +64,7 @@ public class LogicManagement {
     }
 
     @Listener(TruckSensorDtoFromApi.class)
-    public void receiveTruckLocationEvent(TruckSensorDtoFromApi truckSensorDtoFromApi) {
+    public synchronized void receiveTruckLocationEvent(TruckSensorDtoFromApi truckSensorDtoFromApi) {
         log.info("Received truck location event: {}", truckSensorDtoFromApi);
         this.fireService.updateTruckLocation(truckSensorDtoFromApi);
     }
