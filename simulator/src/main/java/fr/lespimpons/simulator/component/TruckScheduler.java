@@ -51,10 +51,9 @@ public class TruckScheduler {
 
     @Transactional
     public void moveTrucks() {
-        Stream<FireTruckMovement> stream = movementList.stream();
         this.interventionSingleton.getInterventionList().forEach(intervention -> {
             FireTruck fireTruck = intervention.getFireTruck();
-            Optional<FireTruckMovement> move = stream.filter(fireTruckMovement -> fireTruckMovement.getFireTruck().getId().equals(fireTruck.getId())).findFirst();
+            Optional<FireTruckMovement> move = movementList.stream().filter(fireTruckMovement -> fireTruckMovement.getFireTruck().getId().equals(fireTruck.getId())).findFirst();
             if (move.isPresent()) {
                 //Avancer d'un dizieme du chemin
                 FireTruckMovement fireTruckMovement = move.get();

@@ -2,9 +2,8 @@ package fr.lespimpons.simulator.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.lespimpons.simulator.component.FireTruckSingleton;
+import fr.lespimpons.simulator.component.InterventionSingleton;
 import fr.lespimpons.simulator.entity.FireTruck;
-import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.entity.Sensor;
 import fr.lespimpons.simulator.object.Fire;
 import fr.lespimpons.simulator.services.FireTruckService;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +32,11 @@ public class SensorController {
 
     private final RestTemplate restTemplate;
 
-    public SensorController(RestTemplate restTemplate) {
+    private final InterventionSingleton interventionSingleton;
+
+    public SensorController(RestTemplate restTemplate, InterventionSingleton interventionSingleton) {
         this.restTemplate = restTemplate;
+        this.interventionSingleton = interventionSingleton;
     }
 
     @GetMapping("/sensor")
@@ -98,9 +99,9 @@ public class SensorController {
     @Transactional
     public void checkFires(List<Fire> listFire){
         //Liste des camions en intervention
-        List<FireTruck> fireTruckList = FireTruckSingleton.getInstance().getFireTruckList();
+        List<FireTruck> fireTruckList = interventionSingleton.getTrucks();
         for (FireTruck fireTruck : fireTruckList){
-            System.out.println("FireTruck "+fireTruck.getId());
+            System.out.println("FireTruck "+fireTruck.getId()+ " Lat : "+fireTruck.getLatitude()+" Lng : "+fireTruck.getLongitude());
         }
 
         for (Fire fire : listFire){
@@ -120,16 +121,10 @@ public class SensorController {
     }
 
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double lat1Rad = Math.toRadians(lat1);
-        double lat2Rad = Math.toRadians(lat2);
-        double lon1Rad = Math.toRadians(lon1);
-        double lon2Rad = Math.toRadians(lon2);
+        double latDistance = Math.abs(lat1 - lat2) * 111000.0;
+        double lngDistance = Math.abs(lon1 - lon2) * 111000.0;
 
-        double x = (lon2Rad - lon1Rad) * Math.cos((lat1Rad + lat2Rad) / 2);
-        double y = (lat2Rad - lat1Rad);
-        double distance = Math.sqrt(x * x + y * y) * 6371;
-
-        return distance * 1000;
+        return Math.sqrt(latDistance * latDistance + lngDistance * lngDistance);
     }
 
     public long calculateIntensity(double distance, double radius) {
