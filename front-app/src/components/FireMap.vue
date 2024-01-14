@@ -3,13 +3,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import {onMounted, ref, watch} from 'vue';
 
 import * as Leaflet from 'leaflet';
-import { storeToRefs } from 'pinia';
-import { useSensorStore } from '../store/sensorStore';
+import {useSensorStore} from '../store/sensorStore';
 import useAppOptionStore from '../store/optionStore';
-import { useStationStore } from '../store/stationStore';
+import {useStationStore} from '../store/stationStore';
+import {fireService} from '../services/index.js'
 
 const map = ref();
 const mapContainer = ref();
@@ -31,29 +31,29 @@ const props = defineProps({
 });
 
 watch(
-  () => useSensorStore().fireSensors,
-  (val) => {
-    console.log('refresh');
-    reset();
-    placeMarkers(props.fireSensors);
-  },
-  { deep: true }
+    () => useSensorStore().fireSensors,
+    (val) => {
+      console.log('refresh');
+      reset();
+      placeMarkers(props.fireSensors);
+    },
+    {deep: true}
 );
 
 watch(
-  () => useAppOptionStore().showAllSensor,
-  () => {
-    console.log('ça change');
-    reset();
-    placeMarkers(props.fireSensors);
-  }
+    () => useAppOptionStore().showAllSensor,
+    () => {
+      console.log('ça change');
+      reset();
+      placeMarkers(props.fireSensors);
+    }
 );
 
 watch(
-  () => useStationStore().fireStations,
-  () => {
-    placeStations(props.stations);
-  }
+    () => useStationStore().fireStations,
+    () => {
+      placeStations(props.stations);
+    }
 )
 
 const iconSensor0 = Leaflet.icon({
@@ -118,8 +118,8 @@ const getIcon = (level) => {
 const placeMarkers = (fires) => {
   fires.forEach((fire) => {
     if (
-      (!useAppOptionStore().showAllSensor && fire.level && fire.level > 0) ||
-      useAppOptionStore().showAllSensor
+        (!useAppOptionStore().showAllSensor && fire.level && fire.level > 0) ||
+        useAppOptionStore().showAllSensor
     ) {
       let marker = new Leaflet.Marker([fire.latitude, fire.longitude], {
         icon: getIcon(fire.level),
@@ -131,20 +131,20 @@ const placeMarkers = (fires) => {
 
   let fireOn = [];
   fires
-    .filter((fire) => fire.level > 0)
-    .forEach((fire) => {
-      // if (fire.level > 0) {
-      //   let circle = new Leaflet.Circle([fire.latitude, fire.longitude], {
-      //     radius: fire.level * 100,
-      //     interactive: false,
-      //     color: 'red',
-      //   });
-      //   circle.addTo(map.value);
-      // }
-      fireOn.push([fire.latitude, fire.longitude]);
-    });
+      .filter((fire) => fire.level > 0)
+      .forEach((fire) => {
+        // if (fire.level > 0) {
+        //   let circle = new Leaflet.Circle([fire.latitude, fire.longitude], {
+        //     radius: fire.level * 100,
+        //     interactive: false,
+        //     color: 'red',
+        //   });
+        //   circle.addTo(map.value);
+        // }
+        fireOn.push([fire.latitude, fire.longitude]);
+      });
   if (fireOn.length > 0) {
-    Leaflet.polygon(fireOn, { weight: 40, color: 'red' }).addTo(map.value);
+    Leaflet.polygon(fireOn, {weight: 40, color: 'red'}).addTo(map.value);
   }
 };
 
@@ -158,18 +158,35 @@ const placeTrucks = (trucks) => {
 
 const placeStations = (stations) => {
   stations.forEach((station) => {
-    new Leaflet.Marker([station.latitude, station.longitude], {
-      icon: stationIcon,
-    }).addTo(map.value);
+    let marker = new Leaflet.Marker([station.latitude, station.longitude], {
+      icon: stationIcon
+    });
+    marker.addTo(map.value);
+    bindPopupStation(station, marker);
   });
 };
+
+const bindPopupStation = (station, marker) => {
+  const popup = Leaflet.popup();
+  popup.setContent(`<h1>Chargement...</h1>`);
+  marker.bindPopup(popup).on("popupopen", () => {
+    fireService.getFireStation(station.id).then((data) => {
+      console.log(data)
+        let content = `<h2>SDIS: ${data.id}</h2>`;
+        content += `<p>Nombre de camions total : ${data.nbFireTruck}</p>`;
+        content += `<p>Nombre de camions disponible : ${data.availableFireTruck}</p>`;
+        popup.setContent(content);
+    });
+  })
+}
+
 
 onMounted(() => {
   map.value = Leaflet.map(mapContainer.value).setView([45.76667, 4.88333], 14);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map.value);
 
   placeMarkers(props.fireSensors);
@@ -205,11 +222,11 @@ onMounted(() => {
 function updateCoordinatesDisplay() {
   // Mettez à jour la chaîne de coordonnées à afficher
   coordinatesDisplay.value = markers.value
-    .map(
-      (marker) =>
-        `<strong>Feu n°${marker.id} :</strong> Latitude: ${marker.lat}, Longitude: ${marker.lng}`
-    )
-    .join('<br><br>');
+      .map(
+          (marker) =>
+              `<strong>Feu n°${marker.id} :</strong> Latitude: ${marker.lat}, Longitude: ${marker.lng}`
+      )
+      .join('<br><br>');
   console.log(coordinatesDisplay);
 }
 

@@ -28,4 +28,9 @@ export default class FireService {
     useStationStore().fireStations = await result.json();
   }
 
+  async getFireStation(id) {
+    let result = await fetch(`http://localhost:8080/fire-station/${id}`);
+    return await result.json();
+  }
+
 }
