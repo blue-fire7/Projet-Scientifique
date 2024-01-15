@@ -91,7 +91,7 @@ const fireDataList = computed({
       latitude: fire.getLatLng().lat,
       longitude: fire.getLatLng().lng,
       diameter: fire.options.radius,
-      power: 0.5,
+      power: 5,
     }));
   },
 });
@@ -110,7 +110,7 @@ onMounted(() => {
   );
 
   // Charger les capteurs après l'initialisation de la carte
-  loadSensors();
+  // loadSensors();
 
   // connectWebSocket();
 
@@ -149,19 +149,11 @@ function addFireOnClick(event) {
     color: 'red',
     fillColor: '#f03',
     fillOpacity: 0.5,
-    power: getRandomInt(1, 9),
-    radius: 200, // 1 kilomètre en mètres
+    radius: 1000, // 1 kilomètre en mètres
   }).addTo(map.value);
 
   // Ajoutez le nouveau GeoJSON à la liste
   listFires.value.push(fire);
-
-  // Mettez à jour la chaîne de coordonnées à afficher
-  updateCoordinatesDisplay();
-}
-
-function updateCoordinatesDisplay() {
-  // Mettez à jour la chaîne de coordonnées à afficher
 }
 
 function reset() {
@@ -172,21 +164,9 @@ function reset() {
 
   // Effacez le tableau de feux
   listFires.value = [];
-
-  // Mettez à jour la chaîne de coordonnées à afficher après la réinitialisation
-  updateCoordinatesDisplay();
 }
 
 function launch() {
-  const fireData = listFires.value.map((fire) => ({
-    id: compteur++,
-    latitude: fire.getLatLng().lat,
-    longitude: fire.getLatLng().lng,
-    diameter: fire.options.radius,
-    power: fire.options.power,
-    sensorList: [],
-  }));
-
   console.log(fireDataList.value);
 
   // SensorService.sensorsOnFire(fireData);
@@ -215,8 +195,5 @@ function updateFiresList(updatedFires) {
     // Ajoutez le nouveau GeoJSON à la liste
     listFires.value.push(fire);
   });
-
-  // Mettez à jour la chaîne de coordonnées à afficher après la mise à jour
-  updateCoordinatesDisplay();
 }
 </script>
