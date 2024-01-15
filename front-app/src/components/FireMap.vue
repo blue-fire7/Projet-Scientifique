@@ -173,8 +173,8 @@ const bindPopupStation = (station, marker) => {
     fireService.getFireStation(station.id).then((data) => {
       console.log(data)
         let content = `<h2>SDIS: ${data.id}</h2>`;
-        content += `<p>Nombre de camions total : ${data.nbFireTruck}</p>`;
-        content += `<p>Nombre de camions disponible : ${data.availableFireTruck}</p>`;
+        content += `<p>Nombre de camions en caserne : ${data.availableFireTruck}/${data.nbFireTruck}</p>`;
+        content += `<p>Nombre d'équipes disponible : ${data.nbAvailableTeams}/${data.nbTeams}</p>`;
         popup.setContent(content);
     });
   })
