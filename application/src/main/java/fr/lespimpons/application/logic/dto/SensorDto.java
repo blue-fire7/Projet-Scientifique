@@ -13,12 +13,14 @@ public class SensorDto {
     private double longitude;
     private double latitude;
     private Integer level;
+    private Long fireId;
 
-    public SensorDto(Long id, BigDecimal longitude, BigDecimal latitude, Integer level) {
+    public SensorDto(Long id, BigDecimal longitude, BigDecimal latitude, Integer level, Long fireId) {
         this.id = id;
         this.longitude = longitude.doubleValue();
         this.latitude = latitude.doubleValue();
         this.level = level;
+        this.fireId = fireId;
     }
 
 

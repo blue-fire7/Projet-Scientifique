@@ -64,8 +64,6 @@ public class FireService {
             throw new RuntimeException("Sensor not found");
         }
 
-        this.eventService.publishEvent(SensorMapper.toDto(sensor, sensorDto.intensity())); // on publish pour le ws
-
 
         //SI 0 ALORS ON REGARDE SI LE FEU EST FINI
         if (sensorDto.intensity() == 0) {
@@ -79,10 +77,12 @@ public class FireService {
                 .doubleValue(), sensor.getLatitude().doubleValue(), RADIUS);
 
 
-
         if (allSensor.isEmpty()) {
             log.info("No fire in the area");
             SensorEventImpl fireEvent = createFireAndSave(sensor, sensorDto.intensity());
+            this.eventService.publishEvent(SensorMapper.toDto(sensor, sensorDto.intensity(), fireEvent.getFireImpl()
+                    .getId())); // on publish pour le ws
+
             log.info("Fire created {}", fireEvent);
             emergencyService.sendEmergency(sensor.getPosition(), fireEvent.getFireImpl());
             log.info("Emergency sent");
@@ -97,8 +97,11 @@ public class FireService {
                             .updateAt(LocalDateTime.now()).build()).level(sensorDto.intensity()).sensorImpl(sensor)
                     .fireImpl(fire).build();
             sensorEventRepository.saveAndFlush(sensorEventImpl);
+            this.eventService.publishEvent(SensorMapper.toDto(sensor, sensorDto.intensity(), sensorEventImpl.getFireImpl()
+                    .getId())); // on publish pour le ws
 
-            //TODO: voir si on update le feu ou si on en crée un nouveau
+
+            //TODO voir si on continue le feu
         }
 
 
@@ -116,6 +119,9 @@ public class FireService {
                     .fireImpl(lastSensorEventBySensorId.getFireImpl()).build();
 
             sensorEventRepository.saveAndFlush(sensorEventImpl);
+            this.eventService.publishEvent(SensorMapper.toDto(sensor, 0, sensorEventImpl.getFireImpl()
+                    .getId())); // on publish pour le ws
+
         }
     }
 
