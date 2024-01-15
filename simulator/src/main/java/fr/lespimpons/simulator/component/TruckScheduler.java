@@ -62,11 +62,11 @@ public class TruckScheduler {
             if (move.isPresent()) {
                 //Avancer d'un dizieme du chemin
                 FireTruckMovement fireTruckMovement = move.get();
-                if (fireTruckMovement.getProgression() < 100) {
+                if (fireTruckMovement.getProgression() < 100  || fireTruckMovement.getFireDestination() == null) {
 
-
-                    fireTruckMovement.setProgression(fireTruckMovement.getProgression() + 10);
-
+                    if (fireTruckMovement.getProgression() < 100 ) {
+                        fireTruckMovement.setProgression(fireTruckMovement.getProgression() + 10);
+                    }
                     //distance entre les deux camions
                     Position distance = fireTruckMovement.getDiffPosition();
 

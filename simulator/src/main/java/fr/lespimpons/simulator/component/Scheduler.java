@@ -48,13 +48,6 @@ public class Scheduler {
         sensorController.checkFires(fireList);
 
 
-        for(Fire fire: fireList){
-            if(fire.getDiameter() <=0){
-                interventionSingleton.getInterventionList().removeIf(intervention -> intervention.getFire().getId() == fire.getId());
-                fireList.remove(fire);
-            }
-        }
-
         for (Fire fire : fireList){
             System.out.println("Fire : id : " +fire.getId() + " Diamètre : "+fire.getDiameter());
         }
@@ -65,7 +58,13 @@ public class Scheduler {
         //Renvoie des feux à la simulation
         webSocketService.updateFireList(fireList);
 
-        fireList.removeIf(fire -> fire.getDiameter() <= 0);
+        for(Fire fire: fireList){
+            if(fire.getDiameter() <=0){
+                interventionSingleton.getInterventionList().removeIf(intervention -> intervention.getFire().getId() == fire.getId());
+                fireList.remove(fire);
+            }
+        }
+
 
         //Envoie des capteurs touchés
         sensorController.sensorsOnFire(fireList);
