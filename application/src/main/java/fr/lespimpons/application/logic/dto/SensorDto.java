@@ -23,5 +23,12 @@ public class SensorDto {
         this.fireId = fireId;
     }
 
+    public SensorDto(Long id, BigDecimal longitude, BigDecimal latitude, Integer level) {
+        this.id = id;
+        this.longitude = longitude.doubleValue();
+        this.latitude = latitude.doubleValue();
+        this.level = level;
+    }
+
 
 }
