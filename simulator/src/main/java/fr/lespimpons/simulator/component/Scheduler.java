@@ -20,10 +20,12 @@ public class Scheduler {
 
     private SensorController sensorController;
     private WebSocketService webSocketService;
+    private InterventionSingleton interventionSingleton;
 
-    public Scheduler(SensorController controller, WebSocketService webSocketService){
+    public Scheduler(SensorController controller, WebSocketService webSocketService, InterventionSingleton interventionSingleton){
         this.sensorController = controller;
         this.webSocketService = webSocketService;
+        this.interventionSingleton = interventionSingleton;
     }
 
     @Scheduled(fixedDelay = 10000)
@@ -41,7 +43,12 @@ public class Scheduler {
         //Diminution de la puissance
         sensorController.checkFires(fireList);
 
-        fireList.removeIf(fire -> fire.getDiameter() <= 0);
+        for(Fire fire: fireList){
+            if(fire.getDiameter() <=0){
+                interventionSingleton.getInterventionList().removeIf(intervention -> intervention.getFire().getId() == fire.getId());
+                fireList.remove(fire);
+            }
+        }
 
         for (Fire fire : fireList){
             System.out.println("Fire : id : " +fire.getId() + " Diamètre : "+fire.getDiameter());
