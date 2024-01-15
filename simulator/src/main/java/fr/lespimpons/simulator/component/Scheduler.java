@@ -58,13 +58,7 @@ public class Scheduler {
         //Renvoie des feux à la simulation
         webSocketService.updateFireList(fireList);
 
-        for(Fire fire: fireList){
-            if(fire.getDiameter() <=0){
-                interventionSingleton.getInterventionList().removeIf(intervention -> intervention.getFire().getId() == fire.getId());
-                fireList.remove(fire);
-            }
-        }
-
+        fireList.removeIf(fire -> fire.getDiameter() <= 0);
 
         //Envoie des capteurs touchés
         sensorController.sensorsOnFire(fireList);

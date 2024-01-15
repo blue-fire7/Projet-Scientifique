@@ -9,22 +9,19 @@ import fr.lespimpons.simulator.object.Fire;
 import fr.lespimpons.simulator.object.FireTruckMovement;
 import fr.lespimpons.simulator.object.Position;
 import fr.lespimpons.simulator.object.dto.FireTruckDto;
-import fr.lespimpons.simulator.repository.FireTruckRepository;
+import fr.lespimpons.simulator.repository.FireRepository;
 import fr.lespimpons.simulator.repository.InterventionRepository;
 import fr.lespimpons.simulator.repository.SensorEventRepository;
 import fr.lespimpons.simulator.services.FireTruckService;
 import fr.lespimpons.simulator.services.WebSocketService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -38,18 +35,22 @@ public class TruckScheduler {
 
     private final List<FireTruckMovement> movementList;
 
-    public TruckScheduler(WebSocketService webSocketService, InterventionRepository interventionRepository, InterventionSingleton interventionSingleton, SensorEventRepository sensorEventRepository, FireTruckService fireTruckService) {
+    private final FireRepository fireRepository;
+
+    public TruckScheduler(WebSocketService webSocketService, InterventionRepository interventionRepository, InterventionSingleton interventionSingleton, SensorEventRepository sensorEventRepository, FireTruckService fireTruckService, FireRepository fireRepository) {
         this.webSocketService = webSocketService;
         this.interventionRepository = interventionRepository;
         this.interventionSingleton = interventionSingleton;
         this.movementList = new ArrayList<FireTruckMovement>();
         this.sensorEventRepository = sensorEventRepository;
         this.fireTruckService = fireTruckService;
+        this.fireRepository = fireRepository;
     }
 
     public void doTick() {
         List<Intervention> activeInterventions = interventionRepository.findActiveInterventions();
         this.interventionSingleton.getInterventionList().addAll(activeInterventions.stream().filter(intervention -> this.interventionSingleton.getInterventionList().stream().noneMatch(intervention1 -> Objects.equals(intervention.getId(), intervention1.getId()))).toList());
+        removeFinishedIntervention();
         moveTrucks();
     }
 
@@ -62,28 +63,25 @@ public class TruckScheduler {
             if (move.isPresent()) {
                 //Avancer d'un dizieme du chemin
                 FireTruckMovement fireTruckMovement = move.get();
-                if (fireTruckMovement.getProgression() < 100  || fireTruckMovement.getFireDestination() == null) {
+                if (fireTruckMovement.getProgression() < 100) {
+                    fireTruckMovement.setProgression(fireTruckMovement.getProgression() + 10);
+                }
+                //distance entre les deux camions
+                Position distance = fireTruckMovement.getDiffPosition();
 
-                    if (fireTruckMovement.getProgression() < 100 ) {
-                        fireTruckMovement.setProgression(fireTruckMovement.getProgression() + 10);
-                    }
-                    //distance entre les deux camions
-                    Position distance = fireTruckMovement.getDiffPosition();
+                //On ajuste la position des camions
+                fireTruckMovement.getFireTruck().setLatitude(fireTruckMovement.getPositionList().get(0).getLatitude() + distance.getLatitude() * 0.01 * fireTruckMovement.getProgression());
+                fireTruckMovement.getFireTruck().setLongitude(fireTruckMovement.getPositionList().get(0).getLongitude() + distance.getLongitude() * 0.01 * fireTruckMovement.getProgression());
 
-                    //On ajuste la position des camions
-                    fireTruckMovement.getFireTruck().setLatitude(fireTruckMovement.getPositionList().get(0).getLatitude() + distance.getLatitude() * 0.01 * fireTruckMovement.getProgression());
-                    fireTruckMovement.getFireTruck().setLongitude(fireTruckMovement.getPositionList().get(0).getLongitude()  + distance.getLongitude() * 0.01 * fireTruckMovement.getProgression());
-
-                    //On vérifie si le camion est dans une zone de feu
-                    if(fireTruckMovement.getFireDestination() == null){
-                        for(Fire fire: fireList){
-                            if(SensorController.isFireTruckInFire(fire, fireTruckMovement.getFireTruck()) && Objects.equals(fire.getId(), intervention.getFire().getId())){
-                                fireTruckMovement.setFireDestination(fire);
-                                Position destination = fireTruckMovement.getPositionList().get(1);
-                                destination.setLatitude(fire.getLatitude());
-                                destination.setLongitude(fire.getLongitude());
-                                break;
-                            }
+                //On vérifie si le camion est dans une zone de feu
+                if (fireTruckMovement.getProgression() >= 100 && fireTruckMovement.getFireDestination() == null) {
+                    for (Fire fire : fireList) {
+                        if (SensorController.isFireTruckInFire(fire, fireTruckMovement.getFireTruck())) {
+                            fireTruckMovement.setFireDestination(fire);
+                            Position destination = fireTruckMovement.getPositionList().get(1);
+                            destination.setLatitude(fire.getLatitude());
+                            destination.setLongitude(fire.getLongitude());
+                            break;
                         }
                     }
                 }
@@ -111,4 +109,13 @@ public class TruckScheduler {
         fireTruckService.sendFireTruckData(SensorController.convertObjectToJson(fireTruckDtos));
     }
 
+
+    public void removeFinishedIntervention() {
+        for (Intervention intervention : interventionSingleton.getInterventionList()) {
+            fr.lespimpons.simulator.entity.Fire fire_status = fireRepository.findFireById(intervention.getFire().getId());
+            if (fire_status.getEndedAt() != null) {
+                interventionSingleton.getInterventionList().remove(intervention);
+            }
+        }
+    }
 }

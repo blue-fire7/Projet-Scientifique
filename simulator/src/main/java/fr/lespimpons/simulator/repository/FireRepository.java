@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 public interface FireRepository extends JpaRepository<Fire, Long> {
+    Fire findFireById(Long id);
 }
