@@ -38,6 +38,7 @@ import SocketService from '../services/SocketService';
 import L from 'leaflet';
 import useFireStore from '../store/fireStore';
 import { generateRID } from '../helpers/id';
+import { truckIcon } from '../helpers/LeafletIcons';
 
 const listFires = ref([]);
 const map = ref(null);
@@ -75,9 +76,9 @@ watch(
       if (truckIcons.value[truck.id]) {
         truckIcons.value[truck.id].setLatLng([truck.latitude, truck.longitude]);
       } else {
-        let marker = L.marker([truck.latitude, truck.longitude]).addTo(
-          map.value
-        );
+        let marker = L.marker([truck.latitude, truck.longitude], {
+          icon: truckIcon,
+        }).addTo(map.value);
         truckIcons.value[truck.id] = marker;
       }
     });
