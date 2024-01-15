@@ -91,7 +91,7 @@ const fireDataList = computed({
       latitude: fire.getLatLng().lat,
       longitude: fire.getLatLng().lng,
       diameter: fire.options.radius,
-      power: 0.5,
+      power: getRandomInt(1, 9),
     }));
   },
 });
@@ -149,8 +149,7 @@ function addFireOnClick(event) {
     color: 'red',
     fillColor: '#f03',
     fillOpacity: 0.5,
-    power: getRandomInt(1, 9),
-    radius: 200, // 1 kilomètre en mètres
+    radius: 300, // 1 kilomètre en mètres
   }).addTo(map.value);
 
   // Ajoutez le nouveau GeoJSON à la liste
@@ -178,15 +177,6 @@ function reset() {
 }
 
 function launch() {
-  const fireData = listFires.value.map((fire) => ({
-    id: compteur++,
-    latitude: fire.getLatLng().lat,
-    longitude: fire.getLatLng().lng,
-    diameter: fire.options.radius,
-    power: fire.options.power,
-    sensorList: [],
-  }));
-
   console.log(fireDataList.value);
 
   // SensorService.sensorsOnFire(fireData);
