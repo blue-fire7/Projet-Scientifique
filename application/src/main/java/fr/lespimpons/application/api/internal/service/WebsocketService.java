@@ -17,7 +17,7 @@ public class WebsocketService {
     }
 
     public void updateFireTruck(FireTruckDto fireTruckDto) {
-        messagingTemplate.convertAndSend("/topic/update/fire", fireTruckDto);
+        messagingTemplate.convertAndSend("/topic/update/fireTruck", fireTruckDto);
     }
 
 }
