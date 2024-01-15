@@ -21,6 +21,15 @@ const useFireTruckStore = defineStore('fireTruck', () => {
       }
     });
   }
+  function updateTruck(truck) {
+    let knownTruck = fireTrucks.value.find((t) => (t.id = trucks.id));
+    if (knownTruck) {
+      knownTruck.latitude = truck.latitude;
+      knownTruck.longitude = truck.longitude;
+    } else {
+      fireTrucks.value.push(truck);
+    }
+  }
 
   return { fireTrucks, getFireTrucks, updateTrucks };
 });

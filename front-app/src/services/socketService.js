@@ -15,7 +15,7 @@ export default class SocketService {
         });
 
         this.client.subscribe('/topic/update/truck', (msg) => {
-          useFireTruckStore().updateTrucks(JSON.parse(msg.body));
+          useFireTruckStore().updateTruck(JSON.parse(msg.body));
         });
       },
 
