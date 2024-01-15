@@ -91,7 +91,7 @@ const fireDataList = computed({
       latitude: fire.getLatLng().lat,
       longitude: fire.getLatLng().lng,
       diameter: fire.options.radius,
-      power: getRandomInt(1, 9),
+      power: 5,
     }));
   },
 });
@@ -110,7 +110,7 @@ onMounted(() => {
   );
 
   // Charger les capteurs après l'initialisation de la carte
-  loadSensors();
+  // loadSensors();
 
   // connectWebSocket();
 
@@ -149,18 +149,11 @@ function addFireOnClick(event) {
     color: 'red',
     fillColor: '#f03',
     fillOpacity: 0.5,
-    radius: 300, // 1 kilomètre en mètres
+    radius: 1000, // 1 kilomètre en mètres
   }).addTo(map.value);
 
   // Ajoutez le nouveau GeoJSON à la liste
   listFires.value.push(fire);
-
-  // Mettez à jour la chaîne de coordonnées à afficher
-  updateCoordinatesDisplay();
-}
-
-function updateCoordinatesDisplay() {
-  // Mettez à jour la chaîne de coordonnées à afficher
 }
 
 function reset() {
@@ -171,9 +164,6 @@ function reset() {
 
   // Effacez le tableau de feux
   listFires.value = [];
-
-  // Mettez à jour la chaîne de coordonnées à afficher après la réinitialisation
-  updateCoordinatesDisplay();
 }
 
 function launch() {
@@ -205,8 +195,5 @@ function updateFiresList(updatedFires) {
     // Ajoutez le nouveau GeoJSON à la liste
     listFires.value.push(fire);
   });
-
-  // Mettez à jour la chaîne de coordonnées à afficher après la mise à jour
-  updateCoordinatesDisplay();
 }
 </script>
