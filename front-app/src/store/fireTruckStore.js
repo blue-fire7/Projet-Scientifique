@@ -31,7 +31,7 @@ const useFireTruckStore = defineStore('fireTruck', () => {
     }
   }
 
-  return { fireTrucks, getFireTrucks, updateTrucks };
+  return { fireTrucks, getFireTrucks, updateTrucks, updateTruck };
 });
 
 export default useFireTruckStore;
