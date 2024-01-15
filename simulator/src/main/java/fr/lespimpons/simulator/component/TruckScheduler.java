@@ -5,6 +5,7 @@ import fr.lespimpons.simulator.controller.SensorController;
 import fr.lespimpons.simulator.entity.FireTruck;
 import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.entity.Sensor;
+import fr.lespimpons.simulator.object.Fire;
 import fr.lespimpons.simulator.object.FireTruckMovement;
 import fr.lespimpons.simulator.object.Position;
 import fr.lespimpons.simulator.object.dto.FireTruckDto;
@@ -57,11 +58,25 @@ public class TruckScheduler {
     public void moveTrucks() {
         this.interventionSingleton.getInterventionList().forEach(intervention -> {
             FireTruck fireTruck = intervention.getFireTruck();
+            List<Fire> fireList = FireSingleton.getInstance().getFireList();
             Optional<FireTruckMovement> move = movementList.stream().filter(fireTruckMovement -> fireTruckMovement.getFireTruck().getId().equals(fireTruck.getId())).findFirst();
             if (move.isPresent()) {
                 //Avancer d'un dizieme du chemin
                 FireTruckMovement fireTruckMovement = move.get();
                 if (fireTruckMovement.getProgression() < 100) {
+                    //On vérifie si le camion est dans une zone de feu
+                    if(fireTruckMovement.getFireDestination() == null){
+                        for(Fire fire: fireList){
+                            if(SensorController.isFireTruckInFire(fire, fireTruckMovement.getFireTruck()) && Objects.equals(fire.getId(), intervention.getFire().getId())){
+                                fireTruckMovement.setFireDestination(fire);
+                                Position destination = fireTruckMovement.getPositionList().get(1);
+                                destination.setLatitude(fire.getLatitude());
+                                destination.setLongitude(fire.getLongitude());
+                                break;
+                            }
+                        }
+                    }
+
                     fireTruckMovement.setProgression(fireTruckMovement.getProgression() + 10);
 
                     //distance entre les deux camions

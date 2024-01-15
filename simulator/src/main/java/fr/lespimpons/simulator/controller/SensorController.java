@@ -117,12 +117,12 @@ public class SensorController {
         }
     }
 
-    public boolean isFireTruckInFire(Fire fire, FireTruck fireTruck){
+    public static boolean isFireTruckInFire(Fire fire, FireTruck fireTruck){
         double distance = calculateDistance(fireTruck.getLatitude(), fireTruck.getLongitude(), fire.getLatitude(), fire.getLongitude());
         return distance <= (75 + (double) fire.getDiameter());
     }
 
-    public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         double latDistance = Math.abs(lat1 - lat2) * 111000.0;
         double lngDistance = Math.abs(lon1 - lon2) * 111000.0;
 
