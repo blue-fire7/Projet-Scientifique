@@ -64,6 +64,17 @@ public class TruckScheduler {
                 //Avancer d'un dizieme du chemin
                 FireTruckMovement fireTruckMovement = move.get();
                 if (fireTruckMovement.getProgression() < 100) {
+
+
+                    fireTruckMovement.setProgression(fireTruckMovement.getProgression() + 10);
+
+                    //distance entre les deux camions
+                    Position distance = fireTruckMovement.getDiffPosition();
+
+                    //On ajuste la position des camions
+                    fireTruckMovement.getFireTruck().setLatitude(fireTruckMovement.getPositionList().get(0).getLatitude() + distance.getLatitude() * 0.01 * fireTruckMovement.getProgression());
+                    fireTruckMovement.getFireTruck().setLongitude(fireTruckMovement.getPositionList().get(0).getLongitude()  + distance.getLongitude() * 0.01 * fireTruckMovement.getProgression());
+
                     //On vérifie si le camion est dans une zone de feu
                     if(fireTruckMovement.getFireDestination() == null){
                         for(Fire fire: fireList){
@@ -76,15 +87,6 @@ public class TruckScheduler {
                             }
                         }
                     }
-
-                    fireTruckMovement.setProgression(fireTruckMovement.getProgression() + 10);
-
-                    //distance entre les deux camions
-                    Position distance = fireTruckMovement.getDiffPosition();
-
-                    //On ajuste la position des camions
-                    fireTruckMovement.getFireTruck().setLatitude(fireTruckMovement.getPositionList().get(0).getLatitude() + distance.getLatitude() * 0.01 * fireTruckMovement.getProgression());
-                    fireTruckMovement.getFireTruck().setLongitude(fireTruckMovement.getPositionList().get(0).getLongitude()  + distance.getLongitude() * 0.01 * fireTruckMovement.getProgression());
                 }
             } else {
                 List<Position> positions = new ArrayList<>();
