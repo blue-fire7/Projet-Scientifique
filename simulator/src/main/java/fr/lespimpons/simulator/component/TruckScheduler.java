@@ -7,6 +7,7 @@ import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.entity.Sensor;
 import fr.lespimpons.simulator.object.FireTruckMovement;
 import fr.lespimpons.simulator.object.Position;
+import fr.lespimpons.simulator.object.dto.FireTruckDto;
 import fr.lespimpons.simulator.repository.FireTruckRepository;
 import fr.lespimpons.simulator.repository.InterventionRepository;
 import fr.lespimpons.simulator.repository.SensorEventRepository;
@@ -82,8 +83,13 @@ public class TruckScheduler {
 
         });
 
+        List<FireTruckDto> fireTruckDtos = new ArrayList<>();
+        this.interventionSingleton.getTrucks().forEach(fireTruck -> {
+            fireTruckDtos.add(new FireTruckDto(fireTruck));
+        });
+
         webSocketService.sendTruckList(this.interventionSingleton.getTrucks());
-//        fireTruckService.sendFireTruckData(SensorController.convertObjectToJson(this.interventionSingleton.getTrucks()));
+        fireTruckService.sendFireTruckData(SensorController.convertObjectToJson(fireTruckDtos));
     }
 
 }
