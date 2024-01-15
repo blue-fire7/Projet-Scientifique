@@ -21,11 +21,13 @@ public class Scheduler {
     private SensorController sensorController;
     private WebSocketService webSocketService;
     private InterventionSingleton interventionSingleton;
+    private TruckScheduler truckScheduler;
 
-    public Scheduler(SensorController controller, WebSocketService webSocketService, InterventionSingleton interventionSingleton){
+    public Scheduler(SensorController controller, WebSocketService webSocketService, InterventionSingleton interventionSingleton, TruckScheduler truckScheduler){
         this.sensorController = controller;
         this.webSocketService = webSocketService;
         this.interventionSingleton = interventionSingleton;
+        this.truckScheduler = truckScheduler;
     }
 
     @Scheduled(fixedDelay = 5000)
@@ -39,6 +41,8 @@ public class Scheduler {
             fire.setDiameter(fire.getDiameter() + 10 * fire.getPower());
             System.out.println("Fire : id : " +fire.getId() + " Lat : "+fire.getLatitude() + " Long : " + fire.getLongitude()+" Diamètre : "+fire.getDiameter());
         }
+
+        truckScheduler.doTick();
 
         //Diminution de la puissance
         sensorController.checkFires(fireList);
@@ -54,6 +58,9 @@ public class Scheduler {
         for (Fire fire : fireList){
             System.out.println("Fire : id : " +fire.getId() + " Diamètre : "+fire.getDiameter());
         }
+
+        //Envoi des capteurs touchés
+        sensorController.sensorsOnFire(fireList);
 
         //Renvoie des feux à la simulation
         webSocketService.updateFireList(fireList);
