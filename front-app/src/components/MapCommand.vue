@@ -17,6 +17,14 @@
         <input type="checkbox" v-model="showAllSensors" />
       </div>
 
+      <div>
+        <label for="showTypeInput">Type d'affichage du feu</label>
+        <select id="showTypeInput" v-model="useAppOptionStore().showMode">
+          <option value="poly">Polygone</option>
+          <option value="circle">Cercles</option>
+        </select>
+      </div>
+
       <div class="flex flex-column">
         <!-- Sensors statut -->
         <div v-if="props.sensors.length > 0" class="flex flex-column gap-1">

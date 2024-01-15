@@ -1,16 +1,21 @@
 import { Client } from '@stomp/stompjs';
 import { useSensorStore } from '../store/sensorStore';
+import useFireTruckStore from '../store/fireTruckStore';
 
 export default class SocketService {
   constructor() {
     console.log('lancement socket');
     this.client = new Client({
-      brokerURL: 'wss://593e6da2a2715d.lhr.life/ws',
+      brokerURL: 'ws://localhost:8080/ws',
 
       onConnect: () => {
         console.log('websocket connecté');
         this.client.subscribe('/topic/update/sensor', (msg) => {
           useSensorStore().updateFireSensor(JSON.parse(msg.body));
+        });
+
+        this.client.subscribe('/topic/update/truck', (msg) => {
+          useFireTruckStore().updateTrucks(JSON.parse(msg.body));
         });
       },
 
