@@ -28,8 +28,9 @@ public class FireTruckService {
         }
     }
 
-    public List<FireTruckDto> getAllFireTruckDto() {
-        return fireTruckRepository.findAll().stream().map(FireTruckMapper::toDto).collect(Collectors.toList());
+    public List<FireTruckDto> getAllFireTruckDtoOnIntervention() {
+        return fireTruckRepository.getFireTruckOnIntervention().stream().map(FireTruckMapper::toDto)
+                .collect(Collectors.toList());
     }
 
 

@@ -29,7 +29,7 @@ public class FrontController {
 
     @GetMapping(value = "/fire-trucks", produces = "application/json")
     public ResponseEntity<List<FireTruckDto>> getAllFireTrucks() {
-        return ResponseEntity.ok(apiManagement.getAllFireTrucks());
+        return ResponseEntity.ok(apiManagement.getAllFireTrucksOnIntervention());
     }
 
     @GetMapping(value = "/fire-stations", produces = "application/json")

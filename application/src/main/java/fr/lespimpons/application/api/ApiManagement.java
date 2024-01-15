@@ -69,8 +69,8 @@ public class ApiManagement {
         event.publishEvent(truckSensorDtoFromApi);
     }
 
-    public List<FireTruckDto> getAllFireTrucks() {
-        return logicManagement.getAllFireTrucks();
+    public List<FireTruckDto> getAllFireTrucksOnIntervention() {
+        return logicManagement.getAllFireTrucksOnIntervention();
     }
 
     public StationDto getFireStation(Long id) {

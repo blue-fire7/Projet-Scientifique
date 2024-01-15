@@ -32,4 +32,5 @@ public class StationImplRepository extends Repository<StationImpl, Long> impleme
                             GROUP BY fs.id;
                 """, StationImpl.class).getResultList();
     }
+
 }

@@ -73,8 +73,8 @@ public class LogicManagement {
         return stationService.getAllFireStations().stream().map(StationMapper::toDto).collect(Collectors.toList());
     }
 
-    public List<FireTruckDto> getAllFireTrucks() {
-        return fireTruckService.getAllFireTruckDto();
+    public List<FireTruckDto> getAllFireTrucksOnIntervention() {
+        return fireTruckService.getAllFireTruckDtoOnIntervention();
     }
 
     public StationDto getFireStation(Long id) {

@@ -52,4 +52,15 @@ public class FireTruckRepositoryImpl extends Repository<FireTruck, Long> impleme
         q.setParameter("stationId", id);
         return q.getSingleResult().intValue();
     }
+
+    public List<FireTruck> getFireTruckOnIntervention() {
+        TypedQuery<FireTruck> q = entityManager.createQuery("""
+                SELECT ft
+                from FireTruck ft
+                where ft.id IN (
+                SELECT i.fireTruck.id FROM Intervention i WHERE i.fire.endedAt IS NULL
+            )
+                """, FireTruck.class);
+        return q.getResultList();
+    }
 }
