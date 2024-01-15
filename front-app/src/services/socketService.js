@@ -6,7 +6,7 @@ export default class SocketService {
   constructor() {
     console.log('lancement socket');
     this.client = new Client({
-      brokerURL: 'ws://localhost:8080/ws',
+      brokerURL: 'ws://192.168.78.85:8080/ws',
 
       onConnect: () => {
         console.log('websocket connecté');
@@ -16,6 +16,7 @@ export default class SocketService {
 
         this.client.subscribe('/topic/update/truck', (msg) => {
           useFireTruckStore().updateTruck(JSON.parse(msg.body));
+          console.log('trucks');
         });
       },
 

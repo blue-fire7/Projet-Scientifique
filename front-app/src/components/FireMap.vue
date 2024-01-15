@@ -68,10 +68,11 @@ watch(
 watch(
   () => useFireTruckStore().fireTrucks,
   () => {
-    resetMarkers('truck');
     console.log(props.trucks);
+    resetMarkers('truck');
     placeTrucks(props.trucks);
-  }
+  },
+  { deep: true }
 );
 
 /**

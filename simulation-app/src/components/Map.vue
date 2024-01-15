@@ -85,6 +85,13 @@ watch(
         truckIcons.value[truck.id] = marker;
       }
     });
+
+    Object.keys(truckIcons.value).forEach((key) => {
+      if (fireStore.truckList.filter((truck) => truck.id == key).length < 1) {
+        map.value.removeLayer(truckIcons.value[key]);
+        delete truckIcons.value[key];
+      }
+    });
   },
   { deep: true }
 );
@@ -104,8 +111,6 @@ const stopSimulation = () => {
   socketService.sendStopSimulation();
 };
 
-var compteur = 1;
-
 onMounted(() => {
   // Initialiser la carte Leaflet
   map.value = L.map('map').setView([45.76667, 4.88333], 14);
@@ -121,13 +126,6 @@ onMounted(() => {
   // Ajoutez un feu sur la carte
   map.value.on('click', addFireOnClick);
 });
-
-function loadSensors() {
-  SensorService.getSensors().then((response) => {
-    const sensors = response.data;
-    createMarkers(sensors);
-  });
-}
 
 function createMarkers(sensors) {
   // Parcourir les capteurs et créer un marqueur pour chaque capteur
