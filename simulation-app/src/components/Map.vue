@@ -119,9 +119,9 @@ onMounted(() => {
   );
 
   // Charger les capteurs après l'initialisation de la carte
-  // loadSensors();
+   loadSensors();
 
-  // connectWebSocket();
+   //connectWebSocket();
 
   // Ajoutez un feu sur la carte
   map.value.on('click', addFireOnClick);
@@ -133,7 +133,7 @@ function createMarkers(sensors) {
     const marker = L.marker([sensor.latitude, sensor.longitude]).addTo(
       map.value
     );
-    marker.bindPopup(`<b>${sensor.latitude}</b><br>${sensor.longitude}`);
+    marker.bindPopup(`id : ${sensor.id} <b>${sensor.latitude}</b><br>${sensor.longitude}`);
   });
 }
 
@@ -151,7 +151,7 @@ function addFireOnClick(event) {
     color: 'red',
     fillColor: '#f03',
     fillOpacity: 0.5,
-    radius: 1000, // 1 kilomètre en mètres
+    radius: 200, // 1 kilomètre en mètres
   }).addTo(map.value);
 
   // Ajoutez le nouveau GeoJSON à la liste
