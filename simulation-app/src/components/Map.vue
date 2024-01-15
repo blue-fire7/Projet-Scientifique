@@ -53,7 +53,11 @@ watch(
   () => {
     fireStore.fireList.forEach((fire) => {
       if (fireCircles.value[fire.id]) {
-        fireCircles.value[fire.id].setRadius(fire.diameter);
+        if (fire.diameter > 0) {
+          fireCircles.value[fire.id].setRadius(fire.diameter);
+        } else {
+          map.value.removeLayer(fireCircles.value[fire.id]);
+        }
       } else {
         let circle = L.circle([fire.latitude, fire.longitude], {
           color: 'red',
@@ -171,6 +175,7 @@ function launch() {
 
   // SensorService.sensorsOnFire(fireData);
   socketService.sendFires(fireDataList.value);
+  reset();
 }
 
 function updateFiresList(updatedFires) {

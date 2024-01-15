@@ -22,7 +22,7 @@ const useFireTruckStore = defineStore('fireTruck', () => {
     });
   }
   function updateTruck(truck) {
-    let knownTruck = fireTrucks.value.find((t) => (t.id = trucks.id));
+    let knownTruck = fireTrucks.value.find((t) => (t.id = truck.id));
     if (knownTruck) {
       knownTruck.latitude = truck.latitude;
       knownTruck.longitude = truck.longitude;
