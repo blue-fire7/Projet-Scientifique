@@ -19,7 +19,8 @@ public class SensorImplRepositoryImpl extends Repository<SensorImpl, Long> imple
                     s.id,
                     s.longitude,
                     s.latitude,
-                    se.level
+                    se.level,
+                    se.fireImpl.id
                 )
                     FROM SensorImpl s
                     LEFT JOIN SensorEventImpl se ON s = se.sensorImpl
