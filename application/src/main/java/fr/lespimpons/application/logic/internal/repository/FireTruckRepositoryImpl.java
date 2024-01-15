@@ -42,12 +42,13 @@ public class FireTruckRepositoryImpl extends Repository<FireTruck, Long> impleme
         q.setParameter("stationId", id.intValue());
         return q.getSingleResult().intValue();
     }
+
     public Integer getFiretruckOfStation(Long id) {
         TypedQuery<Long> q = entityManager.createQuery("""
-                    SELECT COUNT(ft)
-                    from FireTruck ft
-                    where ft.fireStation.id = :stationId
-                    """, Long.class);
+                SELECT COUNT(ft)
+                from FireTruck ft
+                where ft.fireStation.id = :stationId
+                """, Long.class);
         q.setParameter("stationId", id);
         return q.getSingleResult().intValue();
     }

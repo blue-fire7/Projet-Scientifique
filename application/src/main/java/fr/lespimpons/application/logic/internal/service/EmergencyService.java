@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -66,17 +65,11 @@ public class EmergencyService {
         }
 
         List<FireTruck> fireTrucks = fireTruckRepository.findFireTruckDispoByStationId(stations.get(0).getId());
-        List<Team> teams = teamRepository.findTeamDispoByStationId(stations.get(0).getId());
+        List<Team> teams = teamRepository.getAvailableTeamByStationId(stations.get(0).getId());
 
-        //
-        Intervention intervention = Intervention
-                .builder()
-                .id(InterventionId.builder()
-                        .build())
-                .team(teams.get(0))
-                .fire(fire)
-                .fireTruck(fireTrucks.get(0))
-                .build();
+
+        Intervention intervention = Intervention.builder().id(InterventionId.builder().build()).team(teams.get(0))
+                .fire(fire).fireTruck(fireTrucks.get(0)).build();
         log.info("Intervention created : {}", intervention);
         interventionRepository.saveAndFlush(intervention);
     }

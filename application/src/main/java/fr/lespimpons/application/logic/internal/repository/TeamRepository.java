@@ -21,5 +21,5 @@ public interface TeamRepository {
         WHERE i.team.id = t.id AND f.endedAt IS NULL
     )
 """)*/
-    List<Team> findTeamDispoByStationId(Long stationId);
+    List<Team> getAvailableTeamByStationId(Long stationId);
 }

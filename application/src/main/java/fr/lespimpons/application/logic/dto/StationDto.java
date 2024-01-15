@@ -11,6 +11,8 @@ public class StationDto {
     private double latitude;
     private Integer nbFireTruck;
     private Integer AvailableFireTruck;
+    private Integer nbTeams;
+    private Integer nbAvailableTeams;
 
     public StationDto(Long id, BigDecimal longitude, BigDecimal latitude) {
         this.id = id;

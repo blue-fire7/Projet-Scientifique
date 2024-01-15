@@ -8,10 +8,7 @@ import fr.lespimpons.application.logic.dto.FireTruckDto;
 import fr.lespimpons.application.logic.dto.SensorDto;
 import fr.lespimpons.application.logic.dto.StationDto;
 import fr.lespimpons.application.logic.internal.mapper.StationMapper;
-import fr.lespimpons.application.logic.internal.service.FireService;
-import fr.lespimpons.application.logic.internal.service.FireTruckService;
-import fr.lespimpons.application.logic.internal.service.SensorService;
-import fr.lespimpons.application.logic.internal.service.StationService;
+import fr.lespimpons.application.logic.internal.service.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -28,12 +25,14 @@ public class LogicManagement {
     private final StationService stationService;
     private final FireTruckService fireTruckService;
 
+    private final TeamService teamService;
     private LogicManagement() {
         this.eventService = EventService.getInstance();
         this.sensorService = SensorService.getInstance();
         this.fireService = FireService.getInstance();
         this.stationService = StationService.getInstance();
         this.fireTruckService = FireTruckService.getInstance();
+        this.teamService = TeamService.getInstance();
     }
 
     public static LogicManagement getInstance() {
@@ -84,6 +83,10 @@ public class LogicManagement {
         Integer firetruckOfStation = fireTruckService.getFiretruckOfStation(id);
         dto.setAvailableFireTruck(firetruckOfStationWithoutIntervention);
         dto.setNbFireTruck(firetruckOfStation);
+        Integer teamOfStationWithoutIntervention = teamService.getAvailableTeamByStationId(id).size();
+        Integer teamOfStation = teamService.getTeamByStationId(id).size();
+        dto.setNbAvailableTeams(teamOfStationWithoutIntervention);
+        dto.setNbTeams(teamOfStation);
         return dto;
     }
 }
