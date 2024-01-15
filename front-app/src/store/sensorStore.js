@@ -10,6 +10,7 @@ export const useSensorStore = defineStore('sensor', () => {
     let oldSensor = fireSensors.value.find((s) => sensor.id === s.id);
     if (oldSensor) {
       oldSensor.level = sensor.level;
+      oldSensor.fireId = sensor.fireId;
     } else {
       fireSensors.value.push(sensor);
       console.log(fireSensors.value);

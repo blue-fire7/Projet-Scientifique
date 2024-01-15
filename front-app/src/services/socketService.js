@@ -12,11 +12,11 @@ export default class SocketService {
         console.log('websocket connecté');
         this.client.subscribe('/topic/update/sensor', (msg) => {
           useSensorStore().updateFireSensor(JSON.parse(msg.body));
+          console.log(JSON.parse(msg.body));
         });
 
         this.client.subscribe('/topic/update/truck', (msg) => {
           useFireTruckStore().updateTruck(JSON.parse(msg.body));
-          console.log('trucks');
         });
       },
 

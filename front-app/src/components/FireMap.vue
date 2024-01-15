@@ -32,7 +32,7 @@ const props = defineProps({
 watch(
   () => useSensorStore().fireSensors,
   () => {
-    console.log('mmmmhhhhhh');
+    console.log(props.fireSensors.filter((fire) => fire.fireId));
     resetMarkers('fire');
     placeMarkers(props.fireSensors);
     placeFires(props.fireSensors);
