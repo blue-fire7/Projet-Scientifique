@@ -37,7 +37,6 @@ import SensorService from '../services/SensorService';
 import SocketService from '../services/SocketService';
 import L from 'leaflet';
 import useFireStore from '../store/fireStore';
-import { generateRID } from '../helpers/id';
 import { truckIcon } from '../helpers/LeafletIcons';
 
 const listFires = ref([]);
