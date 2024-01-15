@@ -31,6 +31,10 @@ public class SensorService {
         return interventionRepository.findInterventionsByFire_Id(fireId);
     }
 
+    public SensorEvent findSensorEventBySensorId(Long sensorId){
+        return sensorEventRepository.findSensorEventBySensorId(sensorId);
+    }
+
 
 
 }

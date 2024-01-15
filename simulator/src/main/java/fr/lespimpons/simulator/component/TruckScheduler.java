@@ -78,6 +78,9 @@ public class TruckScheduler {
                 Sensor sensorDestination = sensorEventRepository.findMaxSensorEventByFireID(intervention.getFire().getId()).getSensor();
                 positions.add(new Position(sensorDestination.getLatitude(), sensorDestination.getLongitude()));
 
+                intervention.getFireTruck().setLongitude(positions.get(0).getLongitude());
+                intervention.getFireTruck().setLatitude(positions.get(0).getLatitude());
+
                 this.movementList.add(new FireTruckMovement(fireTruck, positions));
             }
 

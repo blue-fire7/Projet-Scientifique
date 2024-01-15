@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "sensor_event")
-public class SensorEvent implements Event {
+public class SensorEvent {
     @EmbeddedId
     private SensorEventId id;
 
@@ -33,8 +33,4 @@ public class SensorEvent implements Event {
     @Column(name = "level", nullable = false)
     private Integer level;
 
-    @Override
-    public LocalDateTime updateAt() {
-        return id.getUpdateAt();
-    }
 }

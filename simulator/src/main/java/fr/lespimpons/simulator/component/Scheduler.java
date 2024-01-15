@@ -26,7 +26,7 @@ public class Scheduler {
         this.webSocketService = webSocketService;
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 5000)
     public void scheduler() throws InterruptedException {
         System.out.println("wait");
         //Récupération de la liste des feux
@@ -41,17 +41,19 @@ public class Scheduler {
         //Diminution de la puissance
         sensorController.checkFires(fireList);
 
-        fireList.removeIf(fire -> fire.getDiameter() <= 0);
+
 
         for (Fire fire : fireList){
             System.out.println("Fire : id : " +fire.getId() + " Diamètre : "+fire.getDiameter());
         }
 
-        //Envoie des capteurs touchés
-        sensorController.sensorsOnFire(fireList);
-
         //Renvoie des feux à la simulation
         webSocketService.updateFireList(fireList);
+
+        fireList.removeIf(fire -> fire.getDiameter() <= 0);
+
+        //Envoie des capteurs touchés
+        sensorController.sensorsOnFire(fireList);
 
     }
 }

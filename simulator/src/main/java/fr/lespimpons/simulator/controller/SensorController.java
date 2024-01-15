@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.lespimpons.simulator.component.InterventionSingleton;
 import fr.lespimpons.simulator.entity.FireTruck;
 import fr.lespimpons.simulator.entity.Sensor;
+import fr.lespimpons.simulator.entity.SensorEvent;
 import fr.lespimpons.simulator.object.Fire;
 import fr.lespimpons.simulator.services.FireTruckService;
 import fr.lespimpons.simulator.services.SensorService;
@@ -65,6 +66,20 @@ public class SensorController {
                     long intensity = calculateIntensity(distance, radius);
                     sensorOnFireList.add(new SensorOnFire(sensor.getId(), intensity));
                 }
+                else {
+                    Boolean valid = true;
+                    for (SensorOnFire sensorOnFire : sensorOnFireList){
+                        if (sensorOnFire.id == sensor.getId()){
+                            valid = false;
+                        }
+                    }
+                    if (valid){
+                        SensorEvent sensorEvent = service.findSensorEventBySensorId(sensor.getId());
+                        if(sensorEvent != null && sensorEvent.getLevel() != 0){
+                            sensorOnFireList.add(new SensorOnFire(sensor.getId(), 0));
+                        }
+                    }
+                }
             }
         }
         for (SensorOnFire sensor : sensorOnFireList){
@@ -78,8 +93,8 @@ public class SensorController {
         //Affichage du Json à envoyer
 //        System.out.println("JSON data: " + json);
 
-        String url = "http://postman-echo.com/post";
-        //String url = "http://192.168.27.83:8000/api/data_capteur";
+        //String url = "http://postman-echo.com/post";
+        String url = "http://192.168.78.83:8080/api/data_capteur";
 
         // Créer un en-tête pour spécifier le type de contenu JSON
         HttpHeaders headers = new HttpHeaders();
@@ -93,7 +108,7 @@ public class SensorController {
 
         // Traitement de la réponse
         String responseBody = responseEntity.getBody();
-        //System.out.println("Response from server: " + responseBody);
+        System.out.println("Response from server: " + responseBody);
 
         return responseEntity;
     }
@@ -122,11 +137,30 @@ public class SensorController {
         return distance <= (75 + (double) fire.getDiameter());
     }
 
-    public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double latDistance = Math.abs(lat1 - lat2) * 111000.0;
-        double lngDistance = Math.abs(lon1 - lon2) * 111000.0;
+    public double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+        // Rayon moyen de la Terre en kilomètres
+        double R = 6371.0;
 
-        return Math.sqrt(latDistance * latDistance + lngDistance * lngDistance);
+        // Conversion des degrés en radians
+        lat1 = Math.toRadians(lat1);
+        lng1 = Math.toRadians(lng1);
+        lat2 = Math.toRadians(lat2);
+        lng2 = Math.toRadians(lng2);
+
+        // Calcul des différences de latitude et de longitude
+        double dLat = lat2 - lat1;
+        double dLng = lng2 - lng1;
+
+        // Formule haversine
+        double a = Math.pow(Math.sin(dLat / 2), 2) +
+                Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dLng / 2), 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Distance haversienne
+        double distance = R * c;
+
+        return distance * 1000;
     }
 
     public long calculateIntensity(double distance, double radius) {
