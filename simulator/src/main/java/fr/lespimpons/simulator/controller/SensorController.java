@@ -132,12 +132,12 @@ public class SensorController {
         }
     }
 
-    public boolean isFireTruckInFire(Fire fire, FireTruck fireTruck){
+    public static boolean isFireTruckInFire(Fire fire, FireTruck fireTruck){
         double distance = calculateDistance(fireTruck.getLatitude(), fireTruck.getLongitude(), fire.getLatitude(), fire.getLongitude());
         return distance <= (75 + (double) fire.getDiameter());
     }
 
-    public double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+    public static double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
         // Rayon moyen de la Terre en kilomètres
         double R = 6371.0;
 

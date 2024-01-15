@@ -14,8 +14,22 @@ public interface SensorEventRepository extends JpaRepository<SensorEvent, Sensor
     @Query(value = "SELECT DISTINCT se.sensor_id FROM sensor_event se WHERE se.fire_id IN :fireIds", nativeQuery = true)
     List<Long> findSensorsByFireIds(@Param("fireIds") List<Long> fireIds);
 
-    @Query("Select se from SensorEvent se where se.fire.id = :fireId order by se.level DESC limit 1")
-    SensorEvent findMaxSensorEventByFireID(Long fireId);
+//    @Query("Select se from SensorEvent se where se.fire.id = :fireId and se. order by se.level DESC limit 1")
+    @Query(value= """
+        SELECT
+            sensor_id,
+            fire_id,
+            update_at,
+            level
+        FROM
+            sensor_event se
+        WHERE
+            update_at in((select max(se2.update_at) from sensor_event se2 where se2.sensor_id = se.sensor_id)) and
+            fire_id = :fireId
+        order by level DESC 
+        limit 1;
+    """, nativeQuery = true)
+    SensorEvent findMaxSensorEventByFireID(@Param("fireId") Long fireId);
 
     @Query("SELECT se FROM SensorEvent se WHERE se.sensor.id = :sensorId ORDER BY se.id.updateAt DESC limit 1")
     SensorEvent findSensorEventBySensorId(@Param("sensorId") Long sensorId);

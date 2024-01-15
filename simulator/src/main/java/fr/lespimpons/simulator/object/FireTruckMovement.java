@@ -14,11 +14,13 @@ public class FireTruckMovement {
     private List<Position> positionList;
     private int progression;
     private FireTruck fireTruck;
+    private Fire fireDestination;
 
     public FireTruckMovement(FireTruck fireTruck, List<Position> positionList) {
         this.fireTruck = fireTruck;
         this.positionList = positionList;
         this.progression = 0;
+        this.fireDestination = null;
     }
 
     public Position getDiffPosition() {
