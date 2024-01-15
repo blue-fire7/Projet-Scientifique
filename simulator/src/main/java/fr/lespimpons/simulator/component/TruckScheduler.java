@@ -1,6 +1,7 @@
 package fr.lespimpons.simulator.component;
 
 
+import fr.lespimpons.simulator.controller.SensorController;
 import fr.lespimpons.simulator.entity.FireTruck;
 import fr.lespimpons.simulator.entity.Intervention;
 import fr.lespimpons.simulator.entity.Sensor;
@@ -9,6 +10,7 @@ import fr.lespimpons.simulator.object.Position;
 import fr.lespimpons.simulator.repository.FireTruckRepository;
 import fr.lespimpons.simulator.repository.InterventionRepository;
 import fr.lespimpons.simulator.repository.SensorEventRepository;
+import fr.lespimpons.simulator.services.FireTruckService;
 import fr.lespimpons.simulator.services.WebSocketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,23 +28,24 @@ import java.util.stream.Stream;
 @Slf4j
 public class TruckScheduler {
     private final WebSocketService webSocketService;
-    private final FireTruckRepository fireTruckRepository;
     private final InterventionRepository interventionRepository;
     private final InterventionSingleton interventionSingleton;
     private final SensorEventRepository sensorEventRepository;
 
+    private final FireTruckService fireTruckService;
+
     private final List<FireTruckMovement> movementList;
 
-    public TruckScheduler(WebSocketService webSocketService, FireTruckRepository fireTruckRepository, InterventionRepository interventionRepository, InterventionSingleton interventionSingleton, SensorEventRepository sensorEventRepository) {
+    public TruckScheduler(WebSocketService webSocketService, InterventionRepository interventionRepository, InterventionSingleton interventionSingleton, SensorEventRepository sensorEventRepository, FireTruckService fireTruckService) {
         this.webSocketService = webSocketService;
-        this.fireTruckRepository = fireTruckRepository;
         this.interventionRepository = interventionRepository;
         this.interventionSingleton = interventionSingleton;
         this.movementList = new ArrayList<FireTruckMovement>();
         this.sensorEventRepository = sensorEventRepository;
+        this.fireTruckService = fireTruckService;
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 5000)
     public void doTick() {
         List<Intervention> activeInterventions = interventionRepository.findActiveInterventions();
         this.interventionSingleton.getInterventionList().addAll(activeInterventions.stream().filter(intervention -> this.interventionSingleton.getInterventionList().stream().noneMatch(intervention1 -> Objects.equals(intervention.getId(), intervention1.getId()))).toList());
@@ -80,6 +83,7 @@ public class TruckScheduler {
         });
 
         webSocketService.sendTruckList(this.interventionSingleton.getTrucks());
+//        fireTruckService.sendFireTruckData(SensorController.convertObjectToJson(this.interventionSingleton.getTrucks()));
     }
 
 }
